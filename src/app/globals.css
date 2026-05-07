@@ -12,6 +12,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@theme {
+  --color-pwhite: #F7F5F2;
+  --color-pblue: #6E7F8D;
+  --color-pgray: #2F3437;
+  --color-sgray: #6B7280;
+  --color-pborder: #E4DED7;
+  --color-pbutton: #5F6F7C;
+  --color-sbutton: #ECE7E1;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
