@@ -20,7 +20,7 @@ export async function authenticate(data: Data) {
       password,
       deviceId,
       deviceInfo,
-      redirectTo: "/crm/home",
+      redirectTo: "/panel",
     });
   } catch (error) {
     if (isRedirectError(error)) {

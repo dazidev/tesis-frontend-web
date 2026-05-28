@@ -82,8 +82,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const deviceId = credentials?.deviceId;
         const deviceInfo = credentials?.deviceInfo;
 
-        console.log("SE EJECUTA ACÁ 1");
-
         if (
           typeof email !== "string" ||
           typeof password !== "string" ||
@@ -92,8 +90,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         ) {
           return null;
         }
-
-        console.log("SE EJECUTA ACÁ 2");
 
         const response = await fetch(`${API}/api/auth/login-web`, {
           method: "POST",
@@ -109,14 +105,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           cache: "no-store",
         });
 
-        console.log(response);
-
         let data: LoginResponse | null = null;
 
         try {
           data = await response.json();
         } catch {
-          console.log("ERROR EN EL BACKEND");
           return null;
         }
 
