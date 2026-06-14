@@ -24,3 +24,13 @@ export interface RefreshResponse {
   accessTokenExpiresIn: number; // seconds
   refreshTokenExpiresIn?: number; // seconds
 }
+
+export interface UserResponse {
+  id: string;
+  name: string;
+  lastname: string;
+  email: string;
+  roles: UserRole;
+  status: UserStatus;
+  lawyerId?: string;
+}
