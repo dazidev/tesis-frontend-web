@@ -38,7 +38,7 @@ export const LoginForm = () => {
   };
 
   return (
-    <form className="p-5 w-full h-full" onSubmit={(e) => handleLogin(e)}>
+    <form className="p-5 w-full h-full" onSubmit={handleLogin}>
       <div className="flex flex-col gap-3 w-full h-auto">
         <CustomInput
           id={"email"}

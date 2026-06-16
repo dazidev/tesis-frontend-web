@@ -49,7 +49,7 @@ export function CustomTable<T>({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="py-6 px-6 text-center text-gray-400"
+                  className="py-6 px-6 text-center bg-white text-gray-700"
                 >
                   {emptyMessage}
                 </td>

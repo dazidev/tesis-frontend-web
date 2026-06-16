@@ -1,8 +1,6 @@
 "use server";
 import { auth } from "@/infrastructure/lib/auth";
 import { AsideNavItem } from "./AsideNavItem";
-import { FaUser } from "react-icons/fa";
-import { FaAngleUp } from "react-icons/fa";
 import { AsideUserOptions } from "./AsideUserOptions";
 
 export const AsideNav = async () => {

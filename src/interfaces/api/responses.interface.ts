@@ -1,4 +1,11 @@
 export type UserRole = "admin" | "lawyer" | "client";
+
+export const userRoleLabels: Record<UserRole, string> = {
+  admin: "Administrador",
+  lawyer: "Abogado",
+  client: "Cliente",
+};
+
 export type UserStatus = "active" | "inactive" | "suspended";
 
 export interface LoginResponse {
@@ -33,4 +40,16 @@ export interface UserResponse {
   roles: UserRole;
   status: UserStatus;
   lawyerId?: string;
+}
+
+export interface UserInvitationResponse {
+  invitationLink: string;
+}
+
+export interface GetUserInvitationResponse {
+  toEmail: string;
+  role: UserRole;
+  id: string;
+  expiresAt: Date;
+  isUsed: boolean;
 }

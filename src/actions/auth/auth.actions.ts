@@ -1,8 +1,15 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { signIn, signOut } from "@/infrastructure/lib/auth";
+import { auth, signIn, signOut } from "@/infrastructure/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
+import {
+  GetUserInvitationResponse,
+  NextServerAuthResponse,
+  NextServerResponse,
+  RegisterUserRequest,
+} from "@/interfaces";
+import { serverApi } from "@/infrastructure/lib/api/server-api";
 
 interface Data {
   email: string;
@@ -50,3 +57,54 @@ export const logout = async () => {
     redirectTo: "/auth/login",
   });
 };
+
+export async function isAuthenticate(): Promise<NextServerAuthResponse> {
+  const session = await auth();
+
+  if (!session?.user) {
+    return {
+      success: false,
+      error: "No autorizado",
+    };
+  }
+
+  return {
+    success: true,
+    user: session.user,
+  };
+}
+
+export async function getUserInvitation(
+  token: string,
+): Promise<NextServerResponse<GetUserInvitationResponse>> {
+  try {
+    const response = await serverApi.get(`/auth/invitation/${token}`);
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al generar la invitación.",
+    };
+  }
+}
+
+export async function registerUser(
+  data: RegisterUserRequest,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.post("/auth/register-user", data);
+
+    return {
+      success: true,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema con su registro, por favor intentelo más tarde.",
+    };
+  }
+}
