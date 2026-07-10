@@ -1,7 +1,12 @@
 "use client";
 
-import { CustomTable, type Column } from "@/components/common";
+import {
+  CustomTable,
+  DeactivateUserModal,
+  type Column,
+} from "@/components/common";
 import { UserResponse } from "@/interfaces";
+import { useState } from "react";
 
 import { FaTrash, FaPen } from "react-icons/fa";
 
@@ -9,13 +14,29 @@ interface Props {
   users: UserResponse[];
 }
 
+interface OpenModal {
+  deactivate: boolean;
+  edit: boolean;
+}
+
 export function UsersTable({ users }: Props) {
+  const [openModal, setOpenModal] = useState<OpenModal>({
+    deactivate: false,
+    edit: false,
+  });
+  const [targetUser, setTargetUser] = useState<UserResponse>();
+
   const handleEdit = (user: UserResponse) => {
     console.log("Editar usuario", user.id);
   };
 
   const handleDelete = (user: UserResponse) => {
-    console.log("Eliminar usuario", user.id);
+    setTargetUser(user);
+    setOpenModal((prev) => ({ ...prev, deactivate: true }));
+  };
+
+  const closeOpenModal = () => {
+    setOpenModal({ deactivate: false, edit: false });
   };
 
   const userColumns: Column<UserResponse>[] = [
@@ -91,12 +112,21 @@ export function UsersTable({ users }: Props) {
   ];
 
   return (
-    <CustomTable
-      name="Usuarios Registrados"
-      items={users}
-      columns={userColumns}
-      getKey={(user) => user.id}
-      emptyMessage="No hay usuarios registrados"
-    />
+    <>
+      <CustomTable
+        name="Usuarios Registrados"
+        items={users}
+        columns={userColumns}
+        getKey={(user) => user.id}
+        emptyMessage="No hay usuarios registrados"
+      />
+      {openModal.deactivate && (
+        <DeactivateUserModal
+          user={targetUser!}
+          open={openModal.deactivate}
+          close={closeOpenModal}
+        />
+      )}
+    </>
   );
 }

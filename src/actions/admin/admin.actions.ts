@@ -3,6 +3,7 @@
 import { serverApi } from "@/infrastructure/lib/api/server-api";
 import {
   NextServerResponse,
+  UserDeactivationRequest,
   UserInvitationRequest,
   UserInvitationResponse,
 } from "@/interfaces";
@@ -32,6 +33,35 @@ export async function sendUserInvitation(
     return {
       success: false,
       error: "Hubo un problema al generar la invitación.",
+    };
+  }
+}
+
+export async function deactivateUser(
+  data: UserDeactivationRequest,
+  userId: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    const isAuth = await isAuthenticate();
+    if (!isAuth.success) throw new Error(isAuth.error);
+
+    const response = await serverApi.patch(
+      `/admin/users/${userId}/deactivate`,
+      data,
+    );
+
+    if (!response)
+      throw new Error("Hubo un problema al desactivar el usuario.");
+
+    return {
+      success: true,
+      data: response.data,
+      message: "El usuario ha sido desactivado correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al desactivar el usuario.",
     };
   }
 }

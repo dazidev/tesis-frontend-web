@@ -25,3 +25,8 @@ export interface RegisterUserRequest {
   password: string;
   invitationId: string;
 }
+
+export interface UserDeactivationRequest {
+  type: string;
+  reason: string;
+}
