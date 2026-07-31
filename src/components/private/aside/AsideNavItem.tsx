@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { IconType } from "react-icons";
-import { FaHome, FaUsers } from "react-icons/fa";
+import { FaHome, FaUsers, FaBalanceScale } from "react-icons/fa";
 
-type IconName = "home" | "users";
+type IconName = "home" | "users" | "balance";
 
 interface Props {
   label: string;
@@ -16,6 +16,7 @@ interface Props {
 const icons: Record<IconName, IconType> = {
   home: FaHome,
   users: FaUsers,
+  balance: FaBalanceScale,
 };
 
 const isActive = (currentPath: string, path: string) => {

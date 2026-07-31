@@ -1,6 +1,8 @@
 export * from "./table/CustomTable";
 export * from "./table/users/UsersTable";
+export * from "./table/processes/ProcessesTable";
 export { CustomInput } from "./input/CustomInput";
 export { CustomButton } from "./button/CustomButton";
-export { InviteUserModal } from "./modal/InviteUser/InviteUserModal";
-export { DeactivateUserModal } from "./modal/DeactivateUser/DeactivateUserModal";
+export { InviteUserModal } from "./modal/invite-user/InviteUserModal";
+export { DeactivateUserModal } from "./modal/deactivate-user/DeactivateUserModal";
+export { DeactivateProcessModal } from "./modal/delete-user/DeactivateProcessModal";

@@ -30,3 +30,7 @@ export interface UserDeactivationRequest {
   type: string;
   reason: string;
 }
+
+export interface ProcessDeactivationRequest {
+  reason: string;
+}

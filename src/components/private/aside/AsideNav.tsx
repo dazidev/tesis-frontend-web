@@ -18,6 +18,11 @@ export const AsideNav = async () => {
             icon={"users"}
             path={"/panel/users"}
           />
+          <AsideNavItem
+            label={"Procesos"}
+            icon={"balance"}
+            path={"/panel/processes"}
+          />
         </ul>
       </div>
       <AsideUserOptions fullname={fullname} email={email} />

@@ -53,3 +53,22 @@ export interface GetUserInvitationResponse {
   expiresAt: Date;
   isUsed: boolean;
 }
+
+//* processes
+
+export type ProcessType = "testate" | "intestate" | "mixed";
+
+export type ProcessStatus = "created" | "opened" | "closed" | "deleted";
+
+export interface ProcessResponse {
+  id: string;
+  courtNumber: string;
+  caseFileNumber: string;
+  type: ProcessType;
+  status: ProcessStatus;
+  defendantId: string;
+  managedByID: string;
+  createdById: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
