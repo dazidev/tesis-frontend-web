@@ -3,6 +3,7 @@
 import { serverApi } from "@/infrastructure/lib/api/server-api";
 import {
   NextServerResponse,
+  UserBasicResponse,
   UserDeactivationRequest,
   UserInvitationRequest,
   UserInvitationResponse,
@@ -62,6 +63,23 @@ export async function deactivateUser(
     return {
       success: false,
       error: "Hubo un problema al desactivar el usuario.",
+    };
+  }
+}
+
+export async function getLawyers(): Promise<
+  NextServerResponse<UserBasicResponse[]>
+> {
+  try {
+    const response = await serverApi.get("/user?role=lawyer");
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
     };
   }
 }

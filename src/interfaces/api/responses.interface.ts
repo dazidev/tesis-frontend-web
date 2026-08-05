@@ -42,6 +42,14 @@ export interface UserResponse {
   lawyerId?: string;
 }
 
+export interface UserBasicResponse {
+  id: string;
+  name: string;
+  lastname: string;
+  email: string;
+  roles: UserRole;
+}
+
 export interface UserInvitationResponse {
   invitationLink: string;
 }
