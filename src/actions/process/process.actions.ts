@@ -2,6 +2,7 @@
 
 import { ProcessResponse } from "@/interfaces";
 import {
+  CreateProcessRequest,
   NextServerResponse,
   ProcessDeactivationRequest,
 } from "../../interfaces/next/next.interface";
@@ -40,6 +41,21 @@ export async function deactivateProcess(
     return {
       success: false,
       error: "Hubo un problema al desactivar el proceso.",
+    };
+  }
+}
+
+export async function createProcess(
+  data: CreateProcessRequest,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.post("/processes", data);
+
+    return { success: true };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al crear el proceso.",
     };
   }
 }

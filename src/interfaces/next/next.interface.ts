@@ -34,3 +34,16 @@ export interface UserDeactivationRequest {
 export interface ProcessDeactivationRequest {
   reason: string;
 }
+
+export interface CreateProcessRequest {
+  courtNumber: string;
+  caseFileNumber: string;
+  type: string;
+  managedByID: string;
+  defendant: {
+    name: string;
+    lastname: string;
+    birthDate: Date | null;
+    deathDate: Date | null;
+  };
+}

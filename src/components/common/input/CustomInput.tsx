@@ -5,10 +5,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 interface Props {
   id: string;
-  type: "email" | "text" | "password";
+  type: "email" | "text" | "password" | "date";
   label: string;
   placeholder: string;
-  value: string;
+  value: any;
   setValue: Dispatch<SetStateAction<string>> | ((value: string) => void);
   required?: boolean;
 }

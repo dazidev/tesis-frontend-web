@@ -5,26 +5,28 @@ import { CustomModal } from "../CustomModal";
 import { CustomInput } from "../../input/CustomInput";
 import { getLawyers } from "@/actions";
 import { UserBasicResponse } from "@/interfaces";
+import { SearchUserItem } from "./SearchUserItem";
 
 interface Props {
   setManagerUser: (id: string) => void;
+  managerUserTarget: string;
+  open: boolean;
+  setClose: () => void;
+  users: UserBasicResponse[] | undefined;
+  setUsers: React.Dispatch<
+    React.SetStateAction<UserBasicResponse[] | undefined>
+  >;
 }
 
-export function SearchUserModal({ setManagerUser }: Props) {
-  const [open, setOpen] = useState(true);
+export function SearchUserModal({
+  setManagerUser,
+  managerUserTarget,
+  open,
+  setClose,
+  users,
+  setUsers,
+}: Props) {
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState<UserBasicResponse[]>();
-
-  useEffect(() => {
-    const loadUsers = async () => {
-      const response = await getLawyers();
-      if (response && response.data) {
-        setUsers(response.data);
-      }
-    };
-
-    loadUsers();
-  }, []);
 
   const filteredUsers = useMemo(() => {
     if (!search.trim()) return [];
@@ -41,7 +43,8 @@ export function SearchUserModal({ setManagerUser }: Props) {
   }, [users, search]);
 
   const handleClose = () => {
-    setOpen(false);
+    setClose();
+    setSearch("");
   };
 
   return (
@@ -62,9 +65,10 @@ export function SearchUserModal({ setManagerUser }: Props) {
               </button>
 
               <button
-                type="submit"
+                type="button"
                 form="create-process-form"
                 className="cursor-pointer rounded-md bg-black px-4 py-2 text-sm text-white"
+                onClick={handleClose}
               >
                 Aceptar
               </button>
@@ -84,10 +88,15 @@ export function SearchUserModal({ setManagerUser }: Props) {
           </div>
           <div>
             {filteredUsers.map((user) => (
-              <div>
-                <span>{`${user.name} ${user.lastname}`}</span>
-                <span>{`${user.email}`}</span>
-              </div>
+              <SearchUserItem
+                key={user.id}
+                id={user.id}
+                fullname={`${user.name} ${user.lastname}`}
+                email={user.email}
+                role={user.roles[0]}
+                setManagerUser={setManagerUser}
+                managerUserTarget={managerUserTarget}
+              />
             ))}
           </div>
         </CustomModal>

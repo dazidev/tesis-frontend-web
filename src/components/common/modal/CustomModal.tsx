@@ -21,8 +21,8 @@ export function CustomModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-      <div className="w-full max-w-lg rounded-xl bg-white shadow-xl">
-        <div className="flex items-center justify-between bg-pwhite border-b rounded-t-xl border-gray-200 px-5 py-4">
+      <div className="flex flex-col flex-10 w-full max-w-lg max-h-[95vh] rounded-xl bg-white shadow-xl">
+        <div className="flex flex-2 items-center justify-between bg-pwhite border-b rounded-t-xl border-gray-200 px-5 py-4">
           <h2 className="text-lg text-black/80 uppercase">{title}</h2>
 
           <button
@@ -34,10 +34,10 @@ export function CustomModal({
           </button>
         </div>
 
-        <div className="px-5 py-4">{children}</div>
+        <div className="flex-8 px-5 py-4 overflow-y-auto">{children}</div>
 
         {footer && (
-          <div className="flex justify-end gap-2 border-t border-gray-200 px-5 py-4">
+          <div className="flex flex-2 justify-end gap-2 border-t border-gray-200 px-5 py-4">
             {footer}
           </div>
         )}
