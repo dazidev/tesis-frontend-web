@@ -5,9 +5,10 @@ import { CustomInput } from "../../input/CustomInput";
 import { CustomSelect } from "../../select/CustomSelect";
 import toast from "react-hot-toast";
 import { SearchUserModal } from "../search-user/SearchUserModal";
-import { getLawyers } from "@/actions";
+import { createProcess, getLawyers } from "@/actions";
 import { UserBasicResponse } from "@/interfaces";
 import { FaTrash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 type DefendantType = {
   name: string;
@@ -44,6 +45,7 @@ export function CreateProcessModal() {
   });
   const [form, setForm] = useState<CreateProcessForm>(InitialCreateProcessForm);
   const [users, setUsers] = useState<UserBasicResponse[]>();
+  const router = useRouter();
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -119,17 +121,26 @@ export function CreateProcessModal() {
       if (!form.defendant.deathDate)
         throw new Error("Seleccione la fecha de defunción del fiando.");
 
-      /*const data: CreateProcessForm = {
-        toEmail: form.email,
-        role: form.role,
+      const data: CreateProcessForm = {
+        courtNumber: form.courtNumber,
+        caseFileNumber: form.caseFileNumber,
+        type: form.type,
+        managedByID: form.managedByID,
+        defendant: {
+          name: form.defendant.name,
+          lastname: form.defendant.lastname,
+          birthDate: form.defendant.birthDate,
+          deathDate: form.defendant.deathDate,
+        },
       };
 
-      const response = await sendUserInvitation(data);
+      const response = await createProcess(data);
 
       if (!response.success) throw new Error(response.error);
 
-      toast.success(response.message!);*/
-      cleanForm();
+      toast.success(response.message!);
+      handleClose();
+      router.refresh();
     } catch (error: unknown) {
       if (typeof error === "string") {
         toast.error(error);

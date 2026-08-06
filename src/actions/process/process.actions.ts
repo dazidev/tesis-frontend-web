@@ -48,10 +48,23 @@ export async function deactivateProcess(
 export async function createProcess(
   data: CreateProcessRequest,
 ): Promise<NextServerResponse<any>> {
-  try {
-    await serverApi.post("/processes", data);
+  const { managedByID, ...dataWithoutManager } = data;
 
-    return { success: true };
+  let verifedData;
+
+  if (!managedByID) {
+    verifedData = dataWithoutManager;
+  } else {
+    verifedData = data;
+  }
+
+  try {
+    await serverApi.post("/processes", verifedData);
+
+    return {
+      success: true,
+      message: "El proceso ha sido creado correctamente.",
+    };
   } catch (error: unknown) {
     return {
       success: false,
