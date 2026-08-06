@@ -5,6 +5,7 @@ export { CustomInput } from "./input/CustomInput";
 export { CustomButton } from "./button/CustomButton";
 export { InviteUserModal } from "./modal/invite-user/InviteUserModal";
 export { DeactivateUserModal } from "./modal/deactivate-user/DeactivateUserModal";
-export { DeactivateProcessModal } from "./modal/delete-user/DeactivateProcessModal";
+export { DeactivateProcessModal } from "./modal/processes/DeactivateProcessModal";
 export { CreateProcessModal } from "./modal/processes/CreateProcessModal";
+export { InitProcessModal } from "./modal/processes/InitProcessModal";
 export { SearchUserModal } from "./modal/search-user/SearchUserModal";

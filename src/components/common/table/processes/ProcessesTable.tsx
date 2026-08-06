@@ -4,9 +4,14 @@ import {
   CustomTable,
   DeactivateProcessModal,
   DeactivateUserModal,
+  InitProcessModal,
   type Column,
 } from "@/components/common";
-import { getDateToString } from "@/infrastructure";
+import {
+  getDateToString,
+  processStatusNames,
+  processStatusStyles,
+} from "@/infrastructure";
 import { ProcessResponse } from "@/interfaces";
 import { useState } from "react";
 
@@ -20,17 +25,20 @@ interface Props {
 interface OpenModal {
   deactivate: boolean;
   edit: boolean;
+  init: boolean;
 }
 
 export function ProcessesTable({ processes }: Props) {
   const [openModal, setOpenModal] = useState<OpenModal>({
     deactivate: false,
     edit: false,
+    init: false,
   });
   const [targetProcess, setTargetProcess] = useState<ProcessResponse>();
 
-  const handleEdit = (user: ProcessResponse) => {
-    console.log("Editar usuario", user.id);
+  const handleInit = (process: ProcessResponse) => {
+    setTargetProcess(process);
+    setOpenModal((prev) => ({ ...prev, init: true }));
   };
 
   const handleDelete = (user: ProcessResponse) => {
@@ -39,7 +47,7 @@ export function ProcessesTable({ processes }: Props) {
   };
 
   const closeOpenModal = () => {
-    setOpenModal({ deactivate: false, edit: false });
+    setOpenModal({ deactivate: false, edit: false, init: false });
   };
 
   const processColumns: Column<ProcessResponse>[] = [
@@ -59,13 +67,9 @@ export function ProcessesTable({ processes }: Props) {
       header: "Estado",
       value: (process) => (
         <span
-          className={`px-2 py-1 rounded-lg ${
-            process.status === "created"
-              ? "bg-green-300/70 text-green-800"
-              : "bg-red-300/70 text-red-900"
-          }`}
+          className={`px-2 py-1 rounded-lg ${processStatusStyles[process.status]}`}
         >
-          {process.status === "created" ? "Creado" : "Inactivo/Suspendido"}
+          {processStatusNames[process.status]}
         </span>
       ),
     },
@@ -81,14 +85,14 @@ export function ProcessesTable({ processes }: Props) {
               title="Iniciar proceso"
               className="
               flex h-8 w-8 items-center justify-center rounded-md
-              border border-gray-300
-              bg-gray-50 text-green-700
+              border border-blue-300
+              bg-blue-50 text-blue-700
               cursor-pointer
               transition-colors duration-200
-              hover:bg-green-100 hover:text-green-900 focus:outline-none
+              hover:bg-blue-100 hover:text-blue-900 focus:outline-none
               disabled:cursor-not-allowed disabled:opacity-50
             "
-              onClick={() => handleEdit(process)}
+              onClick={() => handleInit(process)}
             >
               <FaGear className="h-4 w-4" />
             </button>
@@ -101,24 +105,25 @@ export function ProcessesTable({ processes }: Props) {
               title="Ver proceso"
               className="
               flex h-8 w-8 items-center justify-center rounded-md
-              border border-gray-300
-              bg-gray-50 text-blue-700
+              border border-green-300
+              bg-green-50 text-green-700
               cursor-pointer
               transition-colors duration-200
-              hover:bg-blue-100 hover:text-blue-900 focus:outline-none
+              hover:bg-green-100 hover:text-green-900 focus:outline-none
               disabled:cursor-not-allowed disabled:opacity-50
             "
-              onClick={() => handleEdit(process)}
+              onClick={() => {}}
             >
-              <FaGear className="h-4 w-4" />
+              <FaEye className="h-4 w-4" />
             </button>
           )}
 
-          <button
-            type="button"
-            aria-label={`Eliminar proceso ${process.caseFileNumber}`}
-            title="Eliminar proceso"
-            className="
+          {process.status !== "deleted" && (
+            <button
+              type="button"
+              aria-label={`Eliminar proceso ${process.caseFileNumber}`}
+              title="Eliminar proceso"
+              className="
               flex h-8 w-8 items-center justify-center rounded-md
               border border-red-300
               bg-red-600/10 text-red-600
@@ -127,10 +132,11 @@ export function ProcessesTable({ processes }: Props) {
               hover:bg-red-600/20 hover:text-red-700 focus:outline-none
               disabled:cursor-not-allowed disabled:opacity-50
             "
-            onClick={() => handleDelete(process)}
-          >
-            <FaTrash className="h-4 w-4" />
-          </button>
+              onClick={() => handleDelete(process)}
+            >
+              <FaTrash className="h-4 w-4" />
+            </button>
+          )}
         </div>
       ),
     },
@@ -150,6 +156,14 @@ export function ProcessesTable({ processes }: Props) {
         <DeactivateProcessModal
           process={targetProcess!}
           open={openModal.deactivate}
+          close={closeOpenModal}
+        />
+      )}
+
+      {openModal.init && (
+        <InitProcessModal
+          process={targetProcess!}
+          open={openModal.init}
           close={closeOpenModal}
         />
       )}

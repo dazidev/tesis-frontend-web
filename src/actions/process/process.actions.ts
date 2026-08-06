@@ -72,3 +72,21 @@ export async function createProcess(
     };
   }
 }
+
+export async function initProcess(
+  id: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.post(`/processes/${id}/init`);
+
+    return {
+      success: true,
+      message: "El proceso ha sido iniciado correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al iniciar el proceso.",
+    };
+  }
+}
