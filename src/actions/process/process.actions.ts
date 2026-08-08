@@ -1,6 +1,6 @@
 "use server";
 
-import { ProcessResponse } from "@/interfaces";
+import { ProcessByIdResponse, ProcessResponse } from "@/interfaces";
 import {
   CreateProcessRequest,
   NextServerResponse,
@@ -21,7 +21,25 @@ export async function getProcesses(): Promise<
   } catch (error: unknown) {
     return {
       success: false,
-      error: "Hubo un problema con su registro, por favor intentelo más tarde.",
+      error: "Hubo un problema al cargar los procesos.",
+    };
+  }
+}
+
+export async function getProcess(
+  processId: string,
+): Promise<NextServerResponse<ProcessByIdResponse>> {
+  try {
+    const response = await serverApi.get(`/processes/${processId}`);
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al cargar el proceso.",
     };
   }
 }

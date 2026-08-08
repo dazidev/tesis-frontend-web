@@ -1,7 +1,7 @@
 import { getProcesses } from "@/actions";
 import { CreateProcessModal, ProcessesTable } from "@/components/common";
 
-export default async function UsersPage() {
+export default async function ProcessesPage() {
   const processes = await getProcesses();
 
   return (

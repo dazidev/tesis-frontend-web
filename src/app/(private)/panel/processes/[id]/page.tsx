@@ -1,12 +1,19 @@
-import { getProcesses } from "@/actions";
-import { ProcessesTable } from "@/components/common";
+import { getProcess } from "@/actions";
+import { ProcessView } from "@/components/process/ProcessView";
 
-export default async function UsersPage() {
-  const processes = await getProcesses();
+type Props = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export default async function ProcessPage({ params }: Props) {
+  const { id } = await params;
+  const response = await getProcess(id);
 
   return (
-    <div className="flex flex-col gap-3 w-full h-full px-3 py-5">
-      <ProcessesTable processes={processes.data ?? []} />
-    </div>
+    <>
+      <ProcessView data={response.data} />
+    </>
   );
 }

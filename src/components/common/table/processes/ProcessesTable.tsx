@@ -3,7 +3,6 @@
 import {
   CustomTable,
   DeactivateProcessModal,
-  DeactivateUserModal,
   InitProcessModal,
   type Column,
 } from "@/components/common";
@@ -13,6 +12,7 @@ import {
   processStatusStyles,
 } from "@/infrastructure";
 import { ProcessResponse } from "@/interfaces";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { FaTrash, FaEye } from "react-icons/fa";
@@ -36,6 +36,8 @@ export function ProcessesTable({ processes }: Props) {
   });
   const [targetProcess, setTargetProcess] = useState<ProcessResponse>();
 
+  const router = useRouter();
+
   const handleInit = (process: ProcessResponse) => {
     setTargetProcess(process);
     setOpenModal((prev) => ({ ...prev, init: true }));
@@ -48,6 +50,10 @@ export function ProcessesTable({ processes }: Props) {
 
   const closeOpenModal = () => {
     setOpenModal({ deactivate: false, edit: false, init: false });
+  };
+
+  const handleViewProcess = (processId: string) => {
+    router.push(`/panel/processes/${processId}`);
   };
 
   const processColumns: Column<ProcessResponse>[] = [
@@ -112,7 +118,7 @@ export function ProcessesTable({ processes }: Props) {
               hover:bg-green-100 hover:text-green-900 focus:outline-none
               disabled:cursor-not-allowed disabled:opacity-50
             "
-              onClick={() => {}}
+              onClick={() => handleViewProcess(process.id)}
             >
               <FaEye className="h-4 w-4" />
             </button>

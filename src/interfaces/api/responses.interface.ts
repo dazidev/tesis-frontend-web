@@ -80,3 +80,22 @@ export interface ProcessResponse {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface ProcessByIdResponse {
+  id: string;
+  courtNumber: string;
+  caseFileNumber: string;
+  type: ProcessType;
+  status: ProcessStatus;
+  defendantId: string;
+  defendant: Defendant;
+}
+
+export interface Defendant {
+  id: string;
+  createdAt: Date;
+  name: string;
+  lastname: string;
+  birthDate: Date;
+  deathDate: Date;
+}
