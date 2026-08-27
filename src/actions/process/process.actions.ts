@@ -3,6 +3,7 @@
 import { ProcessByIdResponse, ProcessResponse } from "@/interfaces";
 import {
   CreateProcessRequest,
+  CreateSubStageRequest,
   NextServerResponse,
   ProcessDeactivationRequest,
 } from "../../interfaces/next/next.interface";
@@ -105,6 +106,25 @@ export async function initProcess(
     return {
       success: false,
       error: "Hubo un problema al iniciar el proceso.",
+    };
+  }
+}
+
+export async function createSubStage(
+  data: CreateSubStageRequest,
+  stageId: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.post(`/processes/stage/${stageId}`, data);
+
+    return {
+      success: true,
+      message: "La subetapa ha sido creada correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al crear la subetapa.",
     };
   }
 }

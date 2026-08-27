@@ -68,6 +68,10 @@ export type ProcessType = "testate" | "intestate" | "mixed";
 
 export type ProcessStatus = "created" | "opened" | "closed" | "deleted";
 
+export type StageStatus = "created" | "opened" | "closed";
+
+export type SubstageStatus = "created" | "opened" | "closed";
+
 export interface ProcessResponse {
   id: string;
   courtNumber: string;
@@ -81,6 +85,35 @@ export interface ProcessResponse {
   updatedAt: Date;
 }
 
+export interface Defendant {
+  id: string;
+  createdAt: Date;
+  name: string;
+  lastname: string;
+  birthDate: Date;
+  deathDate: Date;
+}
+
+export interface SubstageNode {
+  id: string;
+  name: string;
+  description: string;
+  status: SubstageStatus;
+  order: number;
+  stageId: string;
+  parentSubstageId: string | undefined;
+  childrenSubstages: SubstageNode[];
+}
+
+export interface ProcessStage {
+  id: string;
+  name: string;
+  description: string;
+  order: number;
+  status: StageStatus;
+  childrenSubstages: SubstageNode[];
+}
+
 export interface ProcessByIdResponse {
   id: string;
   courtNumber: string;
@@ -89,13 +122,5 @@ export interface ProcessByIdResponse {
   status: ProcessStatus;
   defendantId: string;
   defendant: Defendant;
-}
-
-export interface Defendant {
-  id: string;
-  createdAt: Date;
-  name: string;
-  lastname: string;
-  birthDate: Date;
-  deathDate: Date;
+  stages: ProcessStage[];
 }

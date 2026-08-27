@@ -8,4 +8,5 @@ export { DeactivateUserModal } from "./modal/deactivate-user/DeactivateUserModal
 export { DeactivateProcessModal } from "./modal/processes/DeactivateProcessModal";
 export { CreateProcessModal } from "./modal/processes/CreateProcessModal";
 export { InitProcessModal } from "./modal/processes/InitProcessModal";
+export { CreateSubStageModal } from "./modal/processes/CreateSubStageModal";
 export { SearchUserModal } from "./modal/search-user/SearchUserModal";

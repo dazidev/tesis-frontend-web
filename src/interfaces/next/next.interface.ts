@@ -47,3 +47,9 @@ export interface CreateProcessRequest {
     deathDate: Date | null;
   };
 }
+
+export interface CreateSubStageRequest {
+  name: string;
+  description: string;
+  parentSubstageId?: string;
+}

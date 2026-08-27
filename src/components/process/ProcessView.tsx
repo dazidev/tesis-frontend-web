@@ -109,7 +109,7 @@ export function ProcessView({ data }: Props) {
               </tbody>
             </table>
           </div>
-          <ProcessMapView stages={mockStages} />
+          <ProcessMapView stages={process.stages} />
         </div>
       )}
     </>
