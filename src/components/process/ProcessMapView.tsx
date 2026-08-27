@@ -1,20 +1,17 @@
 "use client";
-import {
-  ProcessStage,
-  StageStatus,
-  SubstageNode,
-  SubstageStatus,
-} from "@/interfaces";
+import { ProcessStage, SubstageNode } from "@/interfaces";
 import { useState } from "react";
 import {
   FaEye,
   FaLongArrowAltRight,
   FaChevronDown,
   FaChevronRight,
+  FaTrash,
 } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { CreateSubStageModal } from "../common";
 import { SubstageTree } from "./tree/SubStageTree";
+import { PiDotsThreeOutlineFill } from "react-icons/pi";
 
 export type ProcessMapViewProps = {
   stages: ProcessStage[];
@@ -32,16 +29,15 @@ export interface OptionModal {
 export default function ProcessMapView({
   stages,
   onViewStage,
-  onAddSubstage,
   onAdvanceStage,
   onViewSubstage,
-  onAddChildSubstage,
 }: ProcessMapViewProps) {
   const [target, setTarget] = useState<ProcessStage | SubstageNode>();
   const [typeTarget, setTypeTarget] = useState<"stage" | "substage">();
   const [open, setOpen] = useState<OptionModal>({
     createSubStage: false,
   });
+  const [showOptions, setShowOptions] = useState(() => stages.map(() => false));
 
   const handleModal = (option: keyof OptionModal, value: boolean) => {
     setOpen((prev) => ({ ...prev, [option]: value }));
@@ -54,6 +50,10 @@ export default function ProcessMapView({
     setTarget(stage);
     setTypeTarget(option);
     handleModal("createSubStage", true);
+  };
+
+  const handleShowOptions = (index: number) => {
+    setShowOptions((prev) => ({ ...prev, [index]: !prev[index] }));
   };
 
   return (
@@ -70,9 +70,32 @@ export default function ProcessMapView({
                   <div className="flex flex-row gap-2 shrink-0">
                     <button
                       type="button"
-                      aria-label={`Ver etapa ${stage.name}`}
-                      title="Ver etapa"
+                      aria-label={`Ver opciones`}
+                      title="Ver opciones"
                       className="
+                          flex h-8 w-8 items-center justify-center rounded-md
+                          border border-gray-300
+                        bg-gray-100 text-gray-500
+                          cursor-pointer
+                          transition-colors duration-200
+                        hover:bg-gray-50 hover:text-gray-600 focus:outline-none
+                          disabled:cursor-not-allowed disabled:opacity-50
+                        "
+                      onClick={() => handleShowOptions(i)}
+                    >
+                      {showOptions[i] ? (
+                        <FaChevronRight className="h-4 w-4" />
+                      ) : (
+                        <PiDotsThreeOutlineFill className="h-4 w-4" />
+                      )}
+                    </button>
+                    {showOptions[i] && (
+                      <>
+                        <button
+                          type="button"
+                          aria-label={`Ver etapa ${stage.name}`}
+                          title="Ver etapa"
+                          className="
                           flex h-8 w-8 items-center justify-center rounded-md
                           border border-orange-300
                         bg-orange-50 text-orange-500
@@ -81,15 +104,15 @@ export default function ProcessMapView({
                         hover:bg-orange-100 hover:text-orange-600 focus:outline-none
                           disabled:cursor-not-allowed disabled:opacity-50
                         "
-                      onClick={() => onViewStage?.(stage)}
-                    >
-                      <FaEye className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Agregar subetapa a ${stage.name}`}
-                      title="Agregar subetapa"
-                      className="
+                          onClick={() => onViewStage?.(stage)}
+                        >
+                          <FaEye className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          aria-label={`Agregar subetapa a ${stage.name}`}
+                          title="Agregar subetapa"
+                          className="
                           flex h-8 w-8 items-center justify-center rounded-md
                           border border-green-300
                         bg-green-50 text-green-700
@@ -98,10 +121,31 @@ export default function ProcessMapView({
                         hover:bg-green-100 hover:text-green-900 focus:outline-none
                           disabled:cursor-not-allowed disabled:opacity-50
                         "
-                      onClick={() => handleCreateSubStage(stage, "stage")}
-                    >
-                      <FaPlus className="h-4 w-4" />
-                    </button>
+                          onClick={() => handleCreateSubStage(stage, "stage")}
+                        >
+                          <FaPlus className="h-4 w-4" />
+                        </button>
+                        {!stage.main && (
+                          <button
+                            type="button"
+                            aria-label={`Eliminar etapa`}
+                            title="Eliminar etapa"
+                            className="
+                            flex h-8 w-8 items-center justify-center rounded-md
+                            border border-red-300
+                            bg-red-100 text-red-600
+                            cursor-pointer
+                            transition-colors duration-200
+                            hover:bg-red-200 hover:text-red-700 focus:outline-none
+                            disabled:cursor-not-allowed disabled:opacity-50
+                          "
+                            onClick={() => {}}
+                          >
+                            <FaTrash className="h-4 w-4" />
+                          </button>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
                 {stage.childrenSubstages.length > 0 && (

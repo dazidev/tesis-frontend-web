@@ -1,50 +1,12 @@
 "use client";
 import { processStatusNames, processStatusStyles } from "@/infrastructure";
-import { ProcessByIdResponse } from "@/interfaces";
+import { ProcessByIdResponse, ProcessStage } from "@/interfaces";
 import { useEffect, useState } from "react";
-import ProcessMapView, { ProcessStage } from "./ProcessMapView";
+import ProcessMapView from "./ProcessMapView";
 
 interface Props {
   data: ProcessByIdResponse | undefined;
 }
-
-export const mockStages: ProcessStage[] = [
-  {
-    id: "stage-1",
-    name: "Denuncia del juicio sucesorio",
-    order: 1,
-    status: "opened",
-    childrenSubstages: [],
-  },
-  {
-    id: "stage-2",
-    name: "Nombramiento de herederos y albacea",
-    order: 2,
-    status: "created",
-    childrenSubstages: [],
-  },
-  {
-    id: "stage-3",
-    name: "Inventario y avalúo",
-    order: 3,
-    status: "created",
-    childrenSubstages: [],
-  },
-  {
-    id: "stage-4",
-    name: "Partición y adjudicación",
-    order: 4,
-    status: "created",
-    childrenSubstages: [],
-  },
-  {
-    id: "stage-5",
-    name: "Sentencia",
-    order: 5,
-    status: "created",
-    childrenSubstages: [],
-  },
-];
 
 export function ProcessView({ data }: Props) {
   const [process, setProcess] = useState<ProcessByIdResponse>();
