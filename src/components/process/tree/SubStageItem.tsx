@@ -27,7 +27,7 @@ export function SubstageItem({
   };
 
   return (
-    <li>
+    <li className="flex flex-col w-full overflow-hidden">
       <div className="flex items-center gap-2 min-w-max">
         {hasChildren ? (
           <button
@@ -46,7 +46,7 @@ export function SubstageItem({
           <span className="w-3 shrink-0" />
         )}
 
-        <div className="flex items-center justify-between gap-3 bg-gray-100 border border-gray-400 rounded-md px-3 py-2 min-w-[220px]">
+        <div className="flex items-center justify-between gap-3 bg-gray-100 border border-gray-400 rounded-md px-3 py-2 w-full">
           <span className="text-sm font-medium text-gray-800 whitespace-nowrap">
             {substage.name}
           </span>

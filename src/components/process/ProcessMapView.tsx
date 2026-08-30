@@ -59,14 +59,14 @@ export default function ProcessMapView({
   };
 
   return (
-    <div className="w-full py-8 px-6">
-      <div className="overflow-x-auto">
+    <div className="w-full h-full py-8 px-6">
+      <div className="flex min-h-full overflow-x-auto">
         <div className="flex flex-row items-start justify-start gap-4 max-w-6xl mx-auto w-max min-w-full">
           {stages.map((stage, i) => (
             <div key={stage.id} className="flex flex-row gap-4 items-start">
               <div className="flex flex-col">
-                <div className="flex items-center justify-between bg-gray-300 border border-gray-800 rounded-md px-3 py-4 gap-2 min-w-[260px]">
-                  <p className="text-2md leading-snug text-gray-900 font-bold">
+                <div className="flex items-center justify-between bg-gray-300 border border-gray-800 rounded-md px-3 py-4 gap-2 min-w-[450px] text-center">
+                  <p className="text-2md leading-snug text-gray-900 font-bold w-full">
                     {stage.name}
                   </p>
                   <div className="flex flex-row gap-2 shrink-0">
@@ -151,7 +151,7 @@ export default function ProcessMapView({
                   </div>
                 </div>
                 {stage.childrenSubstages.length > 0 && (
-                  <div className="max-h-96 overflow-y-auto pr-2">
+                  <div className="max-h-96 overflow-y-auto">
                     <SubstageTree
                       substages={stage.childrenSubstages}
                       onViewSubstage={onViewSubstage}
@@ -161,13 +161,31 @@ export default function ProcessMapView({
                   </div>
                 )}
               </div>
-
-              {i !== stages.length - 1 && (
-                <button
-                  type="button"
-                  aria-label={`Avanzar desde ${stage.name}`}
-                  title="Avanzar a la siguiente etapa"
-                  className="
+              <div className="py-4">
+                {i !== stages.length - 1 && (
+                  <div className="flex flex-row gap-2">
+                    <button
+                      type="button"
+                      aria-label={`Agregar etapa intermedia`}
+                      title="Agregar etapa intermedia"
+                      className="
+                          flex h-8 w-8 items-center justify-center rounded-md
+                          border border-green-300
+                        bg-green-50 text-green-700
+                          cursor-pointer
+                          transition-colors duration-200
+                        hover:bg-green-100 hover:text-green-900 focus:outline-none
+                          disabled:cursor-not-allowed disabled:opacity-50
+                        "
+                      onClick={() => {}}
+                    >
+                      <FaPlus className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Avanzar desde ${stage.name}`}
+                      title="Avanzar a la siguiente etapa"
+                      className="
                         flex h-8 w-22 items-center justify-center rounded-md
                         border border-blue-300
                       bg-blue-50 text-blue-700
@@ -176,11 +194,13 @@ export default function ProcessMapView({
                       hover:bg-blue-100 hover:text-blue-900 focus:outline-none
                         disabled:cursor-not-allowed disabled:opacity-50
                       "
-                  onClick={() => onAdvanceStage?.(stage)}
-                >
-                  <FaLongArrowAltRight className="h-4 w-4" />
-                </button>
-              )}
+                      onClick={() => onAdvanceStage?.(stage)}
+                    >
+                      <FaLongArrowAltRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>

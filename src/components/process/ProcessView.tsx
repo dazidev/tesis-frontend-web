@@ -21,7 +21,7 @@ export function ProcessView({ data }: Props) {
     <>
       {process && (
         <div className="flex flex-col gap-3 w-full h-full px-3 py-5">
-          <div className="w-full overflow-x-auto relative rounded-lg border border-gray-300">
+          <div className="w-full overflow-x-hidden relative rounded-lg border border-gray-300">
             <table className="w-full text-sm text-left text-gray-700">
               <thead className="text-xs text-gray-700 uppercase">
                 <tr className="bg-gray-100">
