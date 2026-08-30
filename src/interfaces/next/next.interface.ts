@@ -31,9 +31,15 @@ export interface UserDeactivationRequest {
   reason: string;
 }
 
-export interface ProcessDeactivationRequest {
+interface DeactivationRequest {
   reason: string;
 }
+
+export interface ProcessDeactivationRequest extends DeactivationRequest {}
+
+export interface StageDeactivationRequest extends DeactivationRequest {}
+
+export interface SubStageDeactivationRequest extends DeactivationRequest {}
 
 export interface CreateProcessRequest {
   courtNumber: string;

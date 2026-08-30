@@ -9,7 +9,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
-import { CreateSubStageModal } from "../common";
+import { CreateSubStageModal, DeactivateSubStageModal } from "../common";
 import { SubstageTree } from "./tree/SubStageTree";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
 
@@ -24,6 +24,7 @@ export type ProcessMapViewProps = {
 
 export interface OptionModal {
   createSubStage: boolean;
+  deactivateSubStage: boolean;
 }
 
 export default function ProcessMapView({
@@ -33,9 +34,9 @@ export default function ProcessMapView({
   onViewSubstage,
 }: ProcessMapViewProps) {
   const [target, setTarget] = useState<ProcessStage | SubstageNode>();
-  const [typeTarget, setTypeTarget] = useState<"stage" | "substage">();
   const [open, setOpen] = useState<OptionModal>({
     createSubStage: false,
+    deactivateSubStage: false,
   });
   const [showOptions, setShowOptions] = useState(() => stages.map(() => false));
 
@@ -43,13 +44,14 @@ export default function ProcessMapView({
     setOpen((prev) => ({ ...prev, [option]: value }));
   };
 
-  const handleCreateSubStage = (
-    stage: ProcessStage | SubstageNode,
-    option: "stage" | "substage",
-  ) => {
+  const handleCreateSubStage = (stage: ProcessStage | SubstageNode) => {
     setTarget(stage);
-    setTypeTarget(option);
     handleModal("createSubStage", true);
+  };
+
+  const handleDeactivateSubStage = (stage: ProcessStage | SubstageNode) => {
+    setTarget(stage);
+    handleModal("deactivateSubStage", true);
   };
 
   const handleShowOptions = (index: number) => {
@@ -121,7 +123,7 @@ export default function ProcessMapView({
                         hover:bg-green-100 hover:text-green-900 focus:outline-none
                           disabled:cursor-not-allowed disabled:opacity-50
                         "
-                          onClick={() => handleCreateSubStage(stage, "stage")}
+                          onClick={() => handleCreateSubStage(stage)}
                         >
                           <FaPlus className="h-4 w-4" />
                         </button>
@@ -139,7 +141,7 @@ export default function ProcessMapView({
                             hover:bg-red-200 hover:text-red-700 focus:outline-none
                             disabled:cursor-not-allowed disabled:opacity-50
                           "
-                            onClick={() => {}}
+                            onClick={() => handleDeactivateSubStage(stage)}
                           >
                             <FaTrash className="h-4 w-4" />
                           </button>
@@ -154,6 +156,7 @@ export default function ProcessMapView({
                       substages={stage.childrenSubstages}
                       onViewSubstage={onViewSubstage}
                       handleCreateSubStage={handleCreateSubStage}
+                      handleDeactivateSubStage={handleDeactivateSubStage}
                     />
                   </div>
                 )}
@@ -185,6 +188,11 @@ export default function ProcessMapView({
       <CreateSubStageModal
         item={target!}
         open={open.createSubStage}
+        handleModal={handleModal}
+      />
+      <DeactivateSubStageModal
+        item={target!}
+        open={open.deactivateSubStage}
         handleModal={handleModal}
       />
     </div>

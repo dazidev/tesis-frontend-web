@@ -6,14 +6,13 @@ export function SubstageTree({
   depth = 0,
   onViewSubstage,
   handleCreateSubStage,
+  handleDeactivateSubStage,
 }: {
   substages: SubstageNode[];
   depth?: number;
   onViewSubstage?: (substage: SubstageNode) => void;
-  handleCreateSubStage: (
-    stage: ProcessStage | SubstageNode,
-    option: "stage" | "substage",
-  ) => void;
+  handleCreateSubStage: (stage: ProcessStage | SubstageNode) => void;
+  handleDeactivateSubStage: (stage: ProcessStage | SubstageNode) => void;
 }) {
   if (substages.length === 0) return null;
 
@@ -32,6 +31,7 @@ export function SubstageTree({
           depth={depth}
           onViewSubstage={onViewSubstage}
           handleCreateSubStage={handleCreateSubStage}
+          handleDeactivateSubStage={handleDeactivateSubStage}
         />
       ))}
     </ul>

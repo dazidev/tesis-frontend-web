@@ -6,6 +6,7 @@ export { CustomButton } from "./button/CustomButton";
 export { InviteUserModal } from "./modal/invite-user/InviteUserModal";
 export { DeactivateUserModal } from "./modal/deactivate-user/DeactivateUserModal";
 export { DeactivateProcessModal } from "./modal/processes/DeactivateProcessModal";
+export { DeactivateSubStageModal } from "./modal/processes/DeactivateSubStageModal";
 export { CreateProcessModal } from "./modal/processes/CreateProcessModal";
 export { InitProcessModal } from "./modal/processes/InitProcessModal";
 export { CreateSubStageModal } from "./modal/processes/CreateSubStageModal";

@@ -10,14 +10,13 @@ export function SubstageItem({
   depth,
   onViewSubstage,
   handleCreateSubStage,
+  handleDeactivateSubStage,
 }: {
   substage: SubstageNode;
   depth: number;
   onViewSubstage?: (substage: SubstageNode) => void;
-  handleCreateSubStage: (
-    stage: ProcessStage | SubstageNode,
-    option: "stage" | "substage",
-  ) => void;
+  handleCreateSubStage: (stage: ProcessStage | SubstageNode) => void;
+  handleDeactivateSubStage: (stage: ProcessStage | SubstageNode) => void;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [showOptions, setShowOptions] = useState(false);
@@ -103,7 +102,7 @@ export function SubstageItem({
                     transition-colors duration-200
                     hover:bg-green-100 hover:text-green-900 focus:outline-none
                   "
-                  onClick={() => handleCreateSubStage(substage, "substage")}
+                  onClick={() => handleCreateSubStage(substage)}
                 >
                   <FaPlus className="h-3 w-3" />
                 </button>
@@ -120,7 +119,7 @@ export function SubstageItem({
                     hover:bg-red-200 hover:text-red-700 focus:outline-none
                     disabled:cursor-not-allowed disabled:opacity-50
                   "
-                  onClick={() => {}}
+                  onClick={() => handleDeactivateSubStage(substage)}
                 >
                   <FaTrash className="h-3 w-3" />
                 </button>
@@ -135,6 +134,7 @@ export function SubstageItem({
           depth={depth + 1}
           onViewSubstage={onViewSubstage}
           handleCreateSubStage={handleCreateSubStage}
+          handleDeactivateSubStage={handleDeactivateSubStage}
         />
       )}
     </li>

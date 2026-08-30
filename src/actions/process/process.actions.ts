@@ -6,6 +6,7 @@ import {
   CreateSubStageRequest,
   NextServerResponse,
   ProcessDeactivationRequest,
+  SubStageDeactivationRequest,
 } from "../../interfaces/next/next.interface";
 import { serverApi } from "@/infrastructure/lib/api/server-api";
 
@@ -125,6 +126,25 @@ export async function createSubStage(
     return {
       success: false,
       error: "Hubo un problema al crear la subetapa.",
+    };
+  }
+}
+
+export async function deactivateSubstage(
+  data: SubStageDeactivationRequest,
+  substageId: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.patch(`/processes/substage/${substageId}/deactivate`, data);
+
+    return {
+      success: true,
+      message: "La subetapa ha sido desactivada correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al desactivar la subetapa.",
     };
   }
 }

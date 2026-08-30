@@ -76,7 +76,7 @@ export function DeactivateProcessModal({ process, open, close }: Props) {
         toast.error(error.message);
         return;
       }
-      toast.error("Hubo un error desconocido al desactivar el usuario.");
+      toast.error("Hubo un error desconocido al desactivar el proceso.");
       return;
     }
   };
