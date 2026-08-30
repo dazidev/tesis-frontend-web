@@ -23,6 +23,7 @@ export type ProcessMapViewProps = {
 };
 
 export interface OptionModal {
+  createStage: boolean;
   createSubStage: boolean;
   deactivateSubStage: boolean;
 }
@@ -35,6 +36,7 @@ export default function ProcessMapView({
 }: ProcessMapViewProps) {
   const [target, setTarget] = useState<ProcessStage | SubstageNode>();
   const [open, setOpen] = useState<OptionModal>({
+    createStage: false,
     createSubStage: false,
     deactivateSubStage: false,
   });
@@ -44,9 +46,12 @@ export default function ProcessMapView({
     setOpen((prev) => ({ ...prev, [option]: value }));
   };
 
-  const handleCreateSubStage = (stage: ProcessStage | SubstageNode) => {
+  const handleCreateSubStage = (
+    stage: ProcessStage | SubstageNode,
+    option: "Stage" | "SubStage",
+  ) => {
     setTarget(stage);
-    handleModal("createSubStage", true);
+    handleModal(`create${option}`, true);
   };
 
   const handleDeactivateSubStage = (stage: ProcessStage | SubstageNode) => {
@@ -123,7 +128,9 @@ export default function ProcessMapView({
                         hover:bg-green-100 hover:text-green-900 focus:outline-none
                           disabled:cursor-not-allowed disabled:opacity-50
                         "
-                          onClick={() => handleCreateSubStage(stage)}
+                          onClick={() =>
+                            handleCreateSubStage(stage, "SubStage")
+                          }
                         >
                           <FaPlus className="h-4 w-4" />
                         </button>
@@ -177,7 +184,7 @@ export default function ProcessMapView({
                         hover:bg-green-100 hover:text-green-900 focus:outline-none
                           disabled:cursor-not-allowed disabled:opacity-50
                         "
-                      onClick={() => {}}
+                      onClick={() => handleCreateSubStage(stage, "Stage")}
                     >
                       <FaPlus className="h-4 w-4" />
                     </button>
@@ -205,6 +212,12 @@ export default function ProcessMapView({
           ))}
         </div>
       </div>
+      <CreateSubStageModal
+        item={target!}
+        open={open.createStage}
+        handleModal={handleModal}
+        type="Stage"
+      />
       <CreateSubStageModal
         item={target!}
         open={open.createSubStage}

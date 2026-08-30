@@ -3,9 +3,10 @@ import { useState } from "react";
 import { CustomModal } from "../CustomModal";
 import { CustomInput } from "../../input/CustomInput";
 import toast from "react-hot-toast";
-import { createSubStage } from "@/actions";
+import { createStage, createSubStage } from "@/actions";
 import { useRouter } from "next/navigation";
 import {
+  CreateStageRequest,
   CreateSubStageRequest,
   ProcessStage,
   SubstageNode,
@@ -34,9 +35,15 @@ interface Props {
   item: ProcessStage | SubstageNode;
   open: boolean;
   handleModal: (option: keyof OptionModal, value: boolean) => void;
+  type?: "SubStage" | "Stage";
 }
 
-export function CreateSubStageModal({ item, open, handleModal }: Props) {
+export function CreateSubStageModal({
+  item,
+  open,
+  handleModal,
+  type = "SubStage",
+}: Props) {
   const [form, setForm] = useState<CreateSubStageRequest>(
     InitialCreateProcessForm,
   );
@@ -52,7 +59,7 @@ export function CreateSubStageModal({ item, open, handleModal }: Props) {
 
   const handleClose = () => {
     cleanForm();
-    handleModal("createSubStage", false);
+    handleModal(`create${type}`, false);
   };
 
   const handleCreateSubStage = async (
@@ -66,19 +73,33 @@ export function CreateSubStageModal({ item, open, handleModal }: Props) {
       if (!form.description || form.description.length <= 1)
         throw new Error("Ingrese la descripción.");
 
-      const data: CreateSubStageRequest = {
-        name: form.name,
-        description: form.description,
-        parentSubstageId: isSubstageNode(item) ? item.id : undefined,
-      };
+      if (type === "SubStage") {
+        const data: CreateSubStageRequest = {
+          name: form.name,
+          description: form.description,
+          parentSubstageId: isSubstageNode(item) ? item.id : undefined,
+        };
 
-      const stageId = isSubstageNode(item) ? item.stageId : item.id;
+        const stageId = isSubstageNode(item) ? item.stageId : item.id;
 
-      const response = await createSubStage(data, stageId);
+        const response = await createSubStage(data, stageId);
 
-      if (!response.success) throw new Error(response.error);
+        if (!response.success) throw new Error(response.error);
 
-      toast.success(response.message!);
+        toast.success(response.message!);
+      } else {
+        if (isProcessStage(item)) {
+          const data: CreateStageRequest = {
+            name: form.name,
+            description: form.description,
+            order: item.order + 1,
+          };
+          const response = await createStage(data, item.processId);
+          if (!response.success) throw new Error(response.error);
+
+          toast.success(response.message!);
+        }
+      }
       handleClose();
       router.refresh();
     } catch (error: unknown) {
@@ -86,7 +107,7 @@ export function CreateSubStageModal({ item, open, handleModal }: Props) {
         toast.error(error.message);
         return;
       }
-      toast.error("Hubo un error desconocido al generar la invitación.");
+      toast.error("Hubo un error desconocido al crear la etapa/subetapa.");
       return;
     }
   };
@@ -94,7 +115,7 @@ export function CreateSubStageModal({ item, open, handleModal }: Props) {
   return (
     <CustomModal
       open={open}
-      title="Crear Sub-Etapa"
+      title={`Crear ${type === "Stage" ? "Etapa Intermedia" : "Sub Etapa"}`}
       onClose={() => handleClose()}
       footer={
         <>

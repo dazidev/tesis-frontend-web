@@ -15,7 +15,10 @@ export function SubstageItem({
   substage: SubstageNode;
   depth: number;
   onViewSubstage?: (substage: SubstageNode) => void;
-  handleCreateSubStage: (stage: ProcessStage | SubstageNode) => void;
+  handleCreateSubStage: (
+    stage: ProcessStage | SubstageNode,
+    option: "Stage" | "SubStage",
+  ) => void;
   handleDeactivateSubStage: (stage: ProcessStage | SubstageNode) => void;
 }) {
   const [expanded, setExpanded] = useState(true);
@@ -102,7 +105,7 @@ export function SubstageItem({
                     transition-colors duration-200
                     hover:bg-green-100 hover:text-green-900 focus:outline-none
                   "
-                  onClick={() => handleCreateSubStage(substage)}
+                  onClick={() => handleCreateSubStage(substage, "SubStage")}
                 >
                   <FaPlus className="h-3 w-3" />
                 </button>

@@ -112,6 +112,7 @@ export interface ProcessStage {
   order: number;
   status: StageStatus;
   main: boolean;
+  processId: string;
   childrenSubstages: SubstageNode[];
 }
 

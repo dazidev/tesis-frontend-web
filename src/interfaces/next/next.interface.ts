@@ -59,3 +59,9 @@ export interface CreateSubStageRequest {
   description: string;
   parentSubstageId?: string;
 }
+
+export interface CreateStageRequest {
+  name: string;
+  description: string;
+  order: number;
+}

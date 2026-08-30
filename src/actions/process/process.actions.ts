@@ -3,6 +3,7 @@
 import { ProcessByIdResponse, ProcessResponse } from "@/interfaces";
 import {
   CreateProcessRequest,
+  CreateStageRequest,
   CreateSubStageRequest,
   NextServerResponse,
   ProcessDeactivationRequest,
@@ -107,6 +108,25 @@ export async function initProcess(
     return {
       success: false,
       error: "Hubo un problema al iniciar el proceso.",
+    };
+  }
+}
+
+export async function createStage(
+  data: CreateStageRequest,
+  processId: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.post(`/processes/${processId}/stage`, data);
+
+    return {
+      success: true,
+      message: "La etapa intermedia ha sido creada correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al crear la etapa intermedia.",
     };
   }
 }
