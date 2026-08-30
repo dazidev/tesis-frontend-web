@@ -4,7 +4,7 @@ import { CustomInput } from "../../input/CustomInput";
 import { CustomModal } from "../CustomModal";
 import { OptionModal } from "@/components/process/ProcessMapView";
 import { ProcessStage, SubstageNode } from "@/interfaces";
-import { deactivateSubstage } from "@/actions";
+import { deactivateStage, deactivateSubstage } from "@/actions";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -39,14 +39,15 @@ export function DeactivateSubStageModal({ item, open, handleModal }: Props) {
           "La razón debe tener mínimo 10 y máximo 250 caracteres.",
         );
 
-      if (isSubstageNode(item)) {
-        const response = await deactivateSubstage({ reason }, item.id);
-        if (!response.success) throw new Error(response.error);
+      const response = isSubstageNode(item)
+        ? await deactivateSubstage({ reason }, item.id)
+        : await deactivateStage({ reason }, item.id);
+      if (!response.success) throw new Error(response.error);
 
-        toast.success(response.message!);
-        handleClose();
-        router.refresh();
-      }
+      toast.success(response.message!);
+
+      handleClose();
+      router.refresh();
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
@@ -62,7 +63,7 @@ export function DeactivateSubStageModal({ item, open, handleModal }: Props) {
       {open && (
         <CustomModal
           open={open}
-          title={`Desactivar subetapa`}
+          title={`Desactivar ${isSubstageNode(item) ? "SubEtapa" : "Etapa Intermedia"}`}
           onClose={() => handleClose()}
           footer={
             <>

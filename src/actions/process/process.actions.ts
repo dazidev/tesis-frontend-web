@@ -7,6 +7,7 @@ import {
   CreateSubStageRequest,
   NextServerResponse,
   ProcessDeactivationRequest,
+  StageDeactivationRequest,
   SubStageDeactivationRequest,
 } from "../../interfaces/next/next.interface";
 import { serverApi } from "@/infrastructure/lib/api/server-api";
@@ -127,6 +128,25 @@ export async function createStage(
     return {
       success: false,
       error: "Hubo un problema al crear la etapa intermedia.",
+    };
+  }
+}
+
+export async function deactivateStage(
+  data: StageDeactivationRequest,
+  stageId: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.patch(`/processes/stage/${stageId}/deactivate`, data);
+
+    return {
+      success: true,
+      message: "La etapa intermedia ha sido desactivada correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al desactivar la etapa intermedia.",
     };
   }
 }
