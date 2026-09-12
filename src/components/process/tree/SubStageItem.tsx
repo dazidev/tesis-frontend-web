@@ -4,17 +4,18 @@ import { FaChevronDown, FaChevronRight, FaEye, FaTrash } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
 import { SubstageTree } from "./SubStageTree";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
+import { ViewType } from "../ProcessMapView";
 
 export function SubstageItem({
   substage,
   depth,
-  onViewSubstage,
+  handleView,
   handleCreateSubStage,
   handleDeactivateSubStage,
 }: {
   substage: SubstageNode;
   depth: number;
-  onViewSubstage?: (substage: SubstageNode) => void;
+  handleView: (stage: ProcessStage | SubstageNode, type: ViewType) => void;
   handleCreateSubStage: (
     stage: ProcessStage | SubstageNode,
     option: "Stage" | "SubStage",
@@ -89,9 +90,12 @@ export function SubstageItem({
                     transition-colors duration-200
                     hover:bg-orange-100 hover:text-orange-600 focus:outline-none
                   "
-                  onClick={() => onViewSubstage?.(substage)}
+                  onClick={() => {}}
                 >
-                  <FaEye className="h-3 w-3" />
+                  <FaEye
+                    className="h-3 w-3"
+                    onClick={() => handleView(substage, "substage")}
+                  />
                 </button>
                 <button
                   type="button"
@@ -135,7 +139,7 @@ export function SubstageItem({
         <SubstageTree
           substages={substage.childrenSubstages}
           depth={depth + 1}
-          onViewSubstage={onViewSubstage}
+          handleView={handleView}
           handleCreateSubStage={handleCreateSubStage}
           handleDeactivateSubStage={handleDeactivateSubStage}
         />

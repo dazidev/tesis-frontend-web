@@ -94,6 +94,7 @@ export interface Defendant {
   deathDate: Date;
 }
 
+//* The next two are exclusively for assembling the tree.
 export interface SubstageNode {
   id: string;
   name: string;
@@ -114,6 +115,40 @@ export interface ProcessStage {
   main: boolean;
   processId: string;
   childrenSubstages: SubstageNode[];
+}
+
+//* The following are responses for when you wanna to edit and to see.
+export interface ProcessStageResponse {
+  id: string;
+  name: string;
+  description: string;
+  status: StageStatus;
+  order: number;
+  main: boolean;
+  openSubstages: number;
+  processId: string;
+  updatedAt: Date;
+  digitalFolders: BasicDigitalFolderResponse[];
+}
+
+export interface ProcessSubstageResponse {
+  id: string;
+  name: string;
+  description: string;
+  status: SubstageStatus;
+  order: number;
+  stageId: string;
+  parentSubstageId: string | null;
+  digitalFolders: BasicDigitalFolderResponse[];
+}
+
+export interface BasicDigitalFolderResponse {
+  id: string;
+  name: string;
+  description: string;
+  _count: {
+    digitalFiles: number;
+  };
 }
 
 export interface ProcessByIdResponse {

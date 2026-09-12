@@ -12,38 +12,46 @@ import { FaPlus } from "react-icons/fa6";
 import { CreateSubStageModal, DeactivateSubStageModal } from "../common";
 import { SubstageTree } from "./tree/SubStageTree";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
+import { ViewStageOrSubModal } from "./details/ViewStageOrSubModal";
 
 export type ProcessMapViewProps = {
   stages: ProcessStage[];
-  onViewStage?: (stage: ProcessStage) => void;
   onAddSubstage?: (stage: ProcessStage) => void;
   onAdvanceStage?: (stage: ProcessStage) => void;
-  onViewSubstage?: (substage: SubstageNode) => void;
   onAddChildSubstage?: (substage: SubstageNode) => void;
 };
 
 export interface OptionModal {
   createStage: boolean;
+  view: boolean;
   createSubStage: boolean;
   deactivateSubStage: boolean;
 }
 
+export type ViewType = "stage" | "substage";
+
 export default function ProcessMapView({
   stages,
-  onViewStage,
   onAdvanceStage,
-  onViewSubstage,
 }: ProcessMapViewProps) {
   const [target, setTarget] = useState<ProcessStage | SubstageNode>();
   const [open, setOpen] = useState<OptionModal>({
     createStage: false,
+    view: false,
     createSubStage: false,
     deactivateSubStage: false,
   });
+  const [viewType, setViewType] = useState<ViewType>("stage");
   const [showOptions, setShowOptions] = useState(() => stages.map(() => false));
 
   const handleModal = (option: keyof OptionModal, value: boolean) => {
     setOpen((prev) => ({ ...prev, [option]: value }));
+  };
+
+  const handleView = (stage: ProcessStage | SubstageNode, type: ViewType) => {
+    setTarget(stage);
+    setViewType(type);
+    handleModal("view", true);
   };
 
   const handleCreateSubStage = (
@@ -111,7 +119,7 @@ export default function ProcessMapView({
                         hover:bg-orange-100 hover:text-orange-600 focus:outline-none
                           disabled:cursor-not-allowed disabled:opacity-50
                         "
-                          onClick={() => onViewStage?.(stage)}
+                          onClick={() => handleView(stage, "stage")}
                         >
                           <FaEye className="h-4 w-4" />
                         </button>
@@ -161,7 +169,7 @@ export default function ProcessMapView({
                   <div className="max-h-96 overflow-y-auto">
                     <SubstageTree
                       substages={stage.childrenSubstages}
-                      onViewSubstage={onViewSubstage}
+                      handleView={handleView}
                       handleCreateSubStage={handleCreateSubStage}
                       handleDeactivateSubStage={handleDeactivateSubStage}
                     />
@@ -227,6 +235,12 @@ export default function ProcessMapView({
         item={target!}
         open={open.deactivateSubStage}
         handleModal={handleModal}
+      />
+      <ViewStageOrSubModal
+        id={target?.id!}
+        type={viewType}
+        open={open.view}
+        onClose={handleModal}
       />
     </div>
   );

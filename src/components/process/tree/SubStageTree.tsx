@@ -1,16 +1,17 @@
 import { ProcessStage, SubstageNode } from "@/interfaces";
 import { SubstageItem } from "./SubStageItem";
+import { ViewType } from "../ProcessMapView";
 
 export function SubstageTree({
   substages,
   depth = 0,
-  onViewSubstage,
+  handleView,
   handleCreateSubStage,
   handleDeactivateSubStage,
 }: {
   substages: SubstageNode[];
   depth?: number;
-  onViewSubstage?: (substage: SubstageNode) => void;
+  handleView: (stage: ProcessStage | SubstageNode, type: ViewType) => void;
   handleCreateSubStage: (
     stage: ProcessStage | SubstageNode,
     option: "Stage" | "SubStage",
@@ -32,7 +33,7 @@ export function SubstageTree({
           key={substage.id}
           substage={substage}
           depth={depth}
-          onViewSubstage={onViewSubstage}
+          handleView={handleView}
           handleCreateSubStage={handleCreateSubStage}
           handleDeactivateSubStage={handleDeactivateSubStage}
         />

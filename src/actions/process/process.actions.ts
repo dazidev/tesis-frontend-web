@@ -1,6 +1,11 @@
 "use server";
 
-import { ProcessByIdResponse, ProcessResponse } from "@/interfaces";
+import {
+  ProcessByIdResponse,
+  ProcessResponse,
+  ProcessStageResponse,
+  ProcessSubstageResponse,
+} from "@/interfaces";
 import {
   CreateProcessRequest,
   CreateStageRequest,
@@ -132,6 +137,24 @@ export async function createStage(
   }
 }
 
+export async function getStage(
+  stageId: string,
+): Promise<NextServerResponse<ProcessStageResponse>> {
+  try {
+    const stage = await serverApi.get(`/processes/stage/${stageId}`);
+
+    return {
+      success: true,
+      data: stage.data,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al cargar la etapa.",
+    };
+  }
+}
+
 export async function deactivateStage(
   data: StageDeactivationRequest,
   stageId: string,
@@ -166,6 +189,24 @@ export async function createSubStage(
     return {
       success: false,
       error: "Hubo un problema al crear la subetapa.",
+    };
+  }
+}
+
+export async function getSubStage(
+  subStageId: string,
+): Promise<NextServerResponse<ProcessSubstageResponse>> {
+  try {
+    const stage = await serverApi.get(`/processes/substage/${subStageId}`);
+
+    return {
+      success: true,
+      data: stage.data,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al cargar la subetapa.",
     };
   }
 }
