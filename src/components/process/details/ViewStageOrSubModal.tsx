@@ -9,6 +9,7 @@ import {
   stageStatusNames,
 } from "../../../infrastructure/utils/status";
 import { LoadingScreen } from "@/components/common";
+import { FolderContainer } from "./FolderContainer";
 
 interface Props {
   id: string;
@@ -82,6 +83,7 @@ export const ViewStageOrSubModal = ({ id, type, open, onClose }: Props) => {
                   {data?.description}
                 </p>
               </div>
+              <FolderContainer />
             </div>
           )}
         </div>
