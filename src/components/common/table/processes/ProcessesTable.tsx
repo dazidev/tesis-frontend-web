@@ -9,7 +9,7 @@ import {
 import {
   getDateToString,
   processStatusNames,
-  processStatusStyles,
+  statusStyles,
 } from "@/infrastructure";
 import { ProcessResponse } from "@/interfaces";
 import { useRouter } from "next/navigation";
@@ -73,7 +73,7 @@ export function ProcessesTable({ processes }: Props) {
       header: "Estado",
       value: (process) => (
         <span
-          className={`px-2 py-1 rounded-lg ${processStatusStyles[process.status]}`}
+          className={`px-2 py-1 rounded-lg ${statusStyles[process.status]}`}
         >
           {processStatusNames[process.status]}
         </span>

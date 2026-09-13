@@ -11,3 +11,4 @@ export { CreateProcessModal } from "./modal/processes/CreateProcessModal";
 export { InitProcessModal } from "./modal/processes/InitProcessModal";
 export { CreateSubStageModal } from "./modal/processes/CreateSubStageModal";
 export { SearchUserModal } from "./modal/search-user/SearchUserModal";
+export { LoadingScreen } from "./loading/LoadingScreen";

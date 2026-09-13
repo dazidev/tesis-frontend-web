@@ -1,6 +1,6 @@
 "use client";
-import { processStatusNames, processStatusStyles } from "@/infrastructure";
-import { ProcessByIdResponse, ProcessStage } from "@/interfaces";
+import { processStatusNames, statusStyles } from "@/infrastructure";
+import { ProcessByIdResponse } from "@/interfaces";
 import { useEffect, useState } from "react";
 import ProcessMapView from "./ProcessMapView";
 
@@ -59,7 +59,7 @@ export function ProcessView({ data }: Props) {
                   </td>
                   <td className="py-6 px-6 text-left bg-white text-gray-700">
                     <span
-                      className={`px-2 py-1 rounded-lg ${processStatusStyles[process.status]}`}
+                      className={`px-2 py-1 rounded-lg ${statusStyles[process.status]}`}
                     >
                       {processStatusNames[process.status]}
                     </span>

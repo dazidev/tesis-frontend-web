@@ -4,6 +4,11 @@ import { CustomModal } from "@/components/common/modal/CustomModal";
 import { ProcessStageResponse, ProcessSubstageResponse } from "@/interfaces";
 import { useEffect, useState } from "react";
 import { OptionModal } from "../ProcessMapView";
+import {
+  statusStyles,
+  stageStatusNames,
+} from "../../../infrastructure/utils/status";
+import { LoadingScreen } from "@/components/common";
 
 interface Props {
   id: string;
@@ -17,10 +22,12 @@ export const ViewStageOrSubModal = ({ id, type, open, onClose }: Props) => {
     ProcessStageResponse | ProcessSubstageResponse
   >();
   const [error, setError] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!open || !id) return;
     const getData = async () => {
+      setIsLoading(true);
       if (type === "stage") {
         const response = await getStage(id);
         if (!response.success) {
@@ -36,6 +43,7 @@ export const ViewStageOrSubModal = ({ id, type, open, onClose }: Props) => {
         }
         setData(response.data);
       }
+      setIsLoading(false);
     };
 
     getData();
@@ -46,7 +54,7 @@ export const ViewStageOrSubModal = ({ id, type, open, onClose }: Props) => {
     <>
       <CustomModal
         open={true}
-        title={error ? "Hubo un error" : `${data?.name}`}
+        title={isLoading ? "Cargando..." : `${data?.name}`}
         onClose={() => onClose("view", false)}
         footer={
           <button
@@ -58,7 +66,25 @@ export const ViewStageOrSubModal = ({ id, type, open, onClose }: Props) => {
           </button>
         }
       >
-        <div>{error}</div>
+        <div className="flex flex-col text-gray-900">
+          {isLoading && <LoadingScreen />}
+          {!isLoading && (
+            <div className="flex flex-col gap-2">
+              <span className="flex flex-row gap-1 items-center">
+                Estado:{" "}
+                <p className={`${statusStyles[data?.status!]} px-1 rounded-lg`}>
+                  {stageStatusNames[data?.status!]}
+                </p>
+              </span>
+              <div>
+                <span>Descripción</span>
+                <p className="bg-gray-100 rounded-lg p-2 border-1 border-gray-900">
+                  {data?.description}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </CustomModal>
     </>
   );

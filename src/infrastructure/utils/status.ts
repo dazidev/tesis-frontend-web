@@ -1,4 +1,4 @@
-export const processStatusStyles = {
+export const statusStyles = {
   created: "bg-blue-300/70 text-blue-800",
   opened: "bg-green-300/70 text-green-800",
   closed: "bg-yellow-300/70 text-yellow-800",
@@ -10,4 +10,11 @@ export const processStatusNames = {
   opened: "Abierto",
   closed: "Cerrado",
   deleted: "Eliminado",
+} as const;
+
+export const stageStatusNames = {
+  created: "Creada",
+  opened: "Abierta",
+  closed: "Cerrada",
+  deleted: "Eliminada",
 } as const;
