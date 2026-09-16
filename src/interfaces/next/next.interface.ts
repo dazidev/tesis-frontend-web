@@ -65,3 +65,9 @@ export interface CreateStageRequest {
   description: string;
   order: number;
 }
+
+export interface CreateFolderRequest {
+  name: string;
+  description: string;
+  substageId?: string;
+}

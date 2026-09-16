@@ -8,6 +8,7 @@ interface CustomModalProps {
   children: ReactNode;
   onClose: () => void;
   footer?: ReactNode;
+  width?: string;
 }
 
 export function CustomModal({
@@ -16,12 +17,15 @@ export function CustomModal({
   children,
   onClose,
   footer,
+  width = "max-w-lg",
 }: CustomModalProps) {
   if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-      <div className="flex flex-col flex-10 w-full max-w-lg max-h-[95vh] rounded-xl bg-white shadow-xl">
+      <div
+        className={`flex flex-col flex-10 w-full ${width} max-h-[95vh] rounded-xl bg-white shadow-xl`}
+      >
         <div className="flex flex-2 items-center justify-between bg-pwhite border-b rounded-t-xl border-gray-200 px-5 py-4">
           <h2 className="text-lg text-black/80 uppercase">{title}</h2>
 

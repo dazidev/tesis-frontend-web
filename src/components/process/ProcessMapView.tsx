@@ -237,7 +237,7 @@ export default function ProcessMapView({
         handleModal={handleModal}
       />
       <ViewStageOrSubModal
-        id={target?.id!}
+        item={target!}
         type={viewType}
         open={open.view}
         onClose={handleModal}
