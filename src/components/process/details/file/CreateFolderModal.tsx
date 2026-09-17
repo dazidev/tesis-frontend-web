@@ -2,7 +2,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import { CreateFolderRequest, ProcessStage, SubstageNode } from "@/interfaces";
+import {
+  CreateFolderRequest,
+  FolderResponse,
+  ProcessStage,
+  SubstageNode,
+} from "@/interfaces";
 import { CustomModal } from "@/components/common/modal/CustomModal";
 import { CustomInput } from "@/components/common";
 import { OptionModalFolder } from "../ViewStageOrSubModal";
@@ -19,9 +24,15 @@ interface Props {
   item: ProcessStage | SubstageNode;
   open: boolean;
   handleModal: (option: keyof OptionModalFolder, value: boolean) => void;
+  addFolder: (folder: FolderResponse) => void;
 }
 
-export function CreateFolderModal({ item, open, handleModal }: Props) {
+export function CreateFolderModal({
+  item,
+  open,
+  handleModal,
+  addFolder,
+}: Props) {
   const [form, setForm] = useState<CreateFolderRequest>(
     InitialCreateFolderForm,
   );
@@ -63,6 +74,7 @@ export function CreateFolderModal({ item, open, handleModal }: Props) {
 
       if (!response.success) throw new Error(response.error);
       toast.success(`${response.message}`);
+      addFolder(response.data!);
 
       handleClose();
       router.refresh();

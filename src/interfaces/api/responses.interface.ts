@@ -151,6 +151,18 @@ export interface BasicDigitalFolderResponse {
   };
 }
 
+export interface FolderResponse {
+  id: string;
+  stageId: string;
+  name: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  createdById: string;
+  substageId: string | null;
+}
+
 export interface ProcessByIdResponse {
   id: string;
   courtNumber: string;

@@ -1,22 +1,49 @@
 "use server";
 import { serverApi } from "@/infrastructure/lib/api/server-api";
-import { CreateFolderRequest, NextServerResponse } from "@/interfaces";
+import {
+  CreateFolderRequest,
+  FolderResponse,
+  GetFolderRequest,
+  NextServerResponse,
+} from "@/interfaces";
 
 export async function createFolder(
   data: CreateFolderRequest,
   stageId: string,
-): Promise<NextServerResponse<any>> {
+): Promise<NextServerResponse<FolderResponse>> {
   try {
-    await serverApi.post(`/folder/${stageId}`, data);
+    const response = await serverApi.post(`/folder/${stageId}`, data);
 
     return {
       success: true,
-      message: "El folder ha sido creado correctamente.",
+      data: response.data,
+      message: "La carpeta ha sido creada correctamente.",
     };
   } catch (error: unknown) {
     return {
       success: false,
-      error: "Hubo un problema al crear el folder.",
+      error: "Hubo un problema al crear la carpeta.",
+    };
+  }
+}
+
+export async function getFolders(
+  stageId: string,
+  data?: GetFolderRequest,
+): Promise<NextServerResponse<any>> {
+  try {
+    await serverApi.get(`/folder/${stageId}`, {
+      params: data,
+    });
+
+    return {
+      success: true,
+      message: "Las carpetas han sido obtenidas correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al obtener las carpetas.",
     };
   }
 }

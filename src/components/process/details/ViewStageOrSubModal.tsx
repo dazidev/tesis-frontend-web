@@ -1,7 +1,7 @@
 "use client";
 import { getStage, getSubStage } from "@/actions";
-import { CustomModal } from "@/components/common/modal/CustomModal";
 import {
+  FolderResponse,
   ProcessStage,
   ProcessStageResponse,
   ProcessSubstageResponse,
@@ -9,13 +9,11 @@ import {
 } from "@/interfaces";
 import { useEffect, useState } from "react";
 import { OptionModal } from "../ProcessMapView";
-import {
-  statusStyles,
-  stageStatusNames,
-} from "../../../infrastructure/utils/status";
+import { CustomModal } from "@/components/common/modal/CustomModal";
 import { LoadingScreen } from "@/components/common";
-import { FolderContainer } from "./FolderContainer";
+import { stageStatusNames, statusStyles } from "@/infrastructure";
 import { CreateFolderModal } from "./file/CreateFolderModal";
+import { FolderContainer } from "./FolderContainer";
 import { FaPlus } from "react-icons/fa6";
 
 interface Props {
@@ -29,6 +27,12 @@ export interface OptionModalFolder {
   createFolder: boolean;
   deleteFolder: boolean;
 }
+
+export const isProcessStage = (
+  data: ProcessStageResponse | ProcessSubstageResponse,
+): data is ProcessStageResponse => {
+  return "processId" in data;
+};
 
 export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   const [data, setData] = useState<
@@ -73,6 +77,27 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     setOpenModal((prev) => ({ ...prev, [option]: value }));
   };
 
+  const addFolder = (folder: FolderResponse) => {
+    setData((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        digitalFolders: [
+          ...prev.digitalFolders,
+          {
+            id: folder.id,
+            name: folder.name,
+            description: folder.description,
+            _count: {
+              digitalFiles: 0,
+            },
+          },
+        ],
+      };
+    });
+  };
+
   if (!open) return null;
   return (
     <>
@@ -102,14 +127,16 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
                 </p>
               </span>
               <div>
-                <span>Descripción</span>
+                <span className="px-2">Descripción</span>
                 <p className="bg-gray-100 rounded-lg p-2 border-1 border-gray-900">
                   {data?.description}
                 </p>
               </div>
               <div className="flex flex-col gap-2 mt-2">
                 <div className="flex flex-row items-center justify-between px-2">
-                  <span>Archivos</span>
+                  <span>
+                    Carpetas digitales ({data?.digitalFolders.length})
+                  </span>
                   <button
                     type="button"
                     aria-label={`Agregar etapa intermedia`}
@@ -128,7 +155,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
                     <FaPlus className="h-4 w-4" />
                   </button>
                 </div>
-                <FolderContainer />
+                {data && <FolderContainer data={data.digitalFolders} />}
               </div>
             </div>
           )}
@@ -138,6 +165,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
         item={item}
         open={openModal.createFolder}
         handleModal={handleModalFolder}
+        addFolder={addFolder}
       />
     </>
   );
