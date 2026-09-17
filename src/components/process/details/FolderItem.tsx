@@ -3,6 +3,7 @@ import { FaEye, FaTrash } from "react-icons/fa6";
 
 interface Props {
   item: BasicDigitalFolderResponse;
+  setTarget: (id: string) => void;
 }
 
 const getDocument = (number: number): string => {
@@ -12,7 +13,7 @@ const getDocument = (number: number): string => {
   return `${number} documentos`;
 };
 
-export const FolderItem = ({ item }: Props) => {
+export const FolderItem = ({ item, setTarget }: Props) => {
   return (
     <div className="flex flex-row border-1 rounded-sm p-1 px-2 bg-gray-200 items-center justify-between">
       <div className="flex flex-col text-lg">
@@ -38,7 +39,7 @@ export const FolderItem = ({ item }: Props) => {
                 hover:bg-orange-100 hover:text-orange-600 focus:outline-none
                 disabled:cursor-not-allowed disabled:opacity-50
               "
-          onClick={() => {}}
+          onClick={() => setTarget(item.id)}
         >
           <FaEye className="h-4 w-4" />
         </button>

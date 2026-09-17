@@ -10,12 +10,9 @@ import {
 import { useEffect, useState } from "react";
 import { OptionModal } from "../ProcessMapView";
 import { CustomModal } from "@/components/common/modal/CustomModal";
-import { LoadingScreen } from "@/components/common";
-import { stageStatusNames, statusStyles } from "@/infrastructure";
 import { CreateFolderModal } from "./file/CreateFolderModal";
-import { FolderContainer } from "./FolderContainer";
-import { FaPlus } from "react-icons/fa6";
-
+import { ViewGeneral } from "./view/ViewGeneral";
+import { ViewFolder } from "./view/ViewFolder";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";
@@ -27,6 +24,8 @@ export interface OptionModalFolder {
   createFolder: boolean;
   deleteFolder: boolean;
 }
+
+type OptionView = "general" | "folder";
 
 export const isProcessStage = (
   data: ProcessStageResponse | ProcessSubstageResponse,
@@ -44,6 +43,8 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     createFolder: false,
     deleteFolder: false,
   });
+  const [view, setView] = useState<OptionView>("general");
+  const [target, setTarget] = useState<string>("");
 
   useEffect(() => {
     if (!open || !item) return;
@@ -67,6 +68,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
       setIsLoading(false);
     };
 
+    setView("general");
     getData();
   }, [item, type, open]);
 
@@ -75,6 +77,11 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     value: boolean,
   ) => {
     setOpenModal((prev) => ({ ...prev, [option]: value }));
+  };
+
+  const handleSetTarget = (id: string) => {
+    setTarget(id);
+    setView("folder");
   };
 
   const addFolder = (folder: FolderResponse) => {
@@ -116,50 +123,16 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
         }
         width="max-w-2xl"
       >
-        <div className="flex flex-col text-gray-900">
-          {isLoading && <LoadingScreen />}
-          {!isLoading && (
-            <div className="flex flex-col gap-2">
-              <span className="flex flex-row gap-1 items-center">
-                Estado:{" "}
-                <p className={`${statusStyles[data?.status!]} px-1 rounded-lg`}>
-                  {stageStatusNames[data?.status!]}
-                </p>
-              </span>
-              <div>
-                <span className="px-2">Descripción</span>
-                <p className="bg-gray-100 rounded-lg p-2 border-1 border-gray-900">
-                  {data?.description}
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 mt-2">
-                <div className="flex flex-row items-center justify-between px-2">
-                  <span>
-                    Carpetas digitales ({data?.digitalFolders.length})
-                  </span>
-                  <button
-                    type="button"
-                    aria-label={`Agregar etapa intermedia`}
-                    title="Agregar etapa intermedia"
-                    className="
-                      flex h-7 w-7 items-center justify-center rounded-md
-                      border border-green-300
-                      bg-green-50 text-green-700
-                      cursor-pointer
-                      transition-colors duration-200
-                      hover:bg-green-100 hover:text-green-900 focus:outline-none
-                      disabled:cursor-not-allowed disabled:opacity-50
-                    "
-                    onClick={() => handleModalFolder("createFolder", true)}
-                  >
-                    <FaPlus className="h-4 w-4" />
-                  </button>
-                </div>
-                {data && <FolderContainer data={data.digitalFolders} />}
-              </div>
-            </div>
-          )}
-        </div>
+        {view === "general" ? (
+          <ViewGeneral
+            data={data!}
+            isLoading={isLoading}
+            handleModalFolder={handleModalFolder}
+            setTarget={handleSetTarget}
+          />
+        ) : (
+          <ViewFolder id={target} setView={setView} />
+        )}
       </CustomModal>
       <CreateFolderModal
         item={item}

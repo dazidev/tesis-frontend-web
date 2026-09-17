@@ -27,17 +27,15 @@ export async function createFolder(
   }
 }
 
-export async function getFolders(
-  stageId: string,
-  data?: GetFolderRequest,
-): Promise<NextServerResponse<any>> {
+export async function getFolder(
+  id: string,
+): Promise<NextServerResponse<FolderResponse>> {
   try {
-    await serverApi.get(`/folder/${stageId}`, {
-      params: data,
-    });
+    const response = await serverApi.get(`/folder/${id}`);
 
     return {
       success: true,
+      data: response.data,
       message: "Las carpetas han sido obtenidas correctamente.",
     };
   } catch (error: unknown) {

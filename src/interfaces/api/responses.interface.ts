@@ -161,6 +161,18 @@ export interface FolderResponse {
   deletedAt: Date | null;
   createdById: string;
   substageId: string | null;
+  digitalFiles?: DigitalFileResponse[];
+}
+
+export interface DigitalFileResponse {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  createdById: string;
+  digitalFolderId: string;
 }
 
 export interface ProcessByIdResponse {
