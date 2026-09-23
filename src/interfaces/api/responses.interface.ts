@@ -169,7 +169,7 @@ export interface DigitalFileResponse {
   name: string;
   description: string;
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null;
   deletedAt: Date | null;
   createdById: string;
   digitalFolderId: string;

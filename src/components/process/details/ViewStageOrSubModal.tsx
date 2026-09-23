@@ -10,9 +10,9 @@ import {
 import { useEffect, useState } from "react";
 import { OptionModal } from "../ProcessMapView";
 import { CustomModal } from "@/components/common/modal/CustomModal";
-import { CreateFolderModal } from "./file/CreateFolderModal";
 import { ViewGeneral } from "./view/ViewGeneral";
 import { ViewFolder } from "./view/ViewFolder";
+import { CreateFolderModal } from "./CreateFolderModal";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";

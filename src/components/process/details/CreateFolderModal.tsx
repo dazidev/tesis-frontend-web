@@ -10,9 +10,9 @@ import {
 } from "@/interfaces";
 import { CustomModal } from "@/components/common/modal/CustomModal";
 import { CustomInput } from "@/components/common";
-import { OptionModalFolder } from "../ViewStageOrSubModal";
 import { createFolder } from "@/actions";
 import { isSubstageNode } from "@/components/common/modal/processes/CreateSubStageModal";
+import { OptionModalFolder } from "./ViewStageOrSubModal";
 
 const InitialCreateFolderForm: CreateFolderRequest = {
   name: "",

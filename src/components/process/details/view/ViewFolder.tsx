@@ -1,13 +1,37 @@
 import { getFolder } from "@/actions";
 import { LoadingScreen } from "@/components/common";
-import { FolderResponse } from "@/interfaces";
+import { DigitalFileResponse, FolderResponse } from "@/interfaces";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { FaArrowLeft } from "react-icons/fa6";
+import { FaArrowLeft, FaPlus } from "react-icons/fa6";
+import { FileContainer } from "../file/FileContainer";
 
 interface Props {
   id: string;
   setView: Dispatch<SetStateAction<"general" | "folder">>;
 }
+
+const fileExample: DigitalFileResponse[] = [
+  {
+    id: "asdas",
+    name: "Acta de nacimiento",
+    description: "Acta de nacimiento de Daniel",
+    createdAt: new Date("12-18-2023"),
+    updatedAt: null,
+    deletedAt: null,
+    createdById: "sdfsdf",
+    digitalFolderId: "folder 3",
+  },
+  {
+    id: "asdas",
+    name: "Acta de nacimiento",
+    description: "Acta de nacimiento de Eduardo",
+    createdAt: new Date("12-18-2023"),
+    updatedAt: null,
+    deletedAt: null,
+    createdById: "sdfsdf",
+    digitalFolderId: "folder 3",
+  },
+];
 
 export const ViewFolder = ({ id, setView }: Props) => {
   const [data, setData] = useState<FolderResponse>();
@@ -55,6 +79,34 @@ export const ViewFolder = ({ id, setView }: Props) => {
             <span>
               Documentos de la carpeta digital ({data?.name.toUpperCase()})
             </span>
+          </div>
+          <div className="flex flex-row items-center justify-between px-2">
+            <span>Documentos ({fileExample.length})</span>
+            <button
+              type="button"
+              aria-label={`Agregar etapa intermedia`}
+              title="Agregar etapa intermedia"
+              className="
+                flex h-7 w-7 items-center justify-center rounded-md
+                border border-green-300
+                bg-green-50 text-green-700
+                cursor-pointer
+                transition-colors duration-200
+                hover:bg-green-100 hover:text-green-900 focus:outline-none
+                disabled:cursor-not-allowed disabled:opacity-50
+              "
+              onClick={() => {}}
+            >
+              <FaPlus className="h-4 w-4" />
+            </button>
+          </div>
+          <div>
+            <FileContainer
+              data={fileExample}
+              setTarget={function (id: string): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
           </div>
         </div>
       )}
