@@ -56,7 +56,7 @@ export const ViewGeneral = ({
                 <FaPlus className="h-4 w-4" />
               </button>
             </div>
-            {data.digitalFolders.length > 0 && (
+            {data?.digitalFolders.length > 0 && (
               <FolderContainer
                 data={data.digitalFolders}
                 setTarget={setTarget}

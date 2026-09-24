@@ -13,26 +13,36 @@ interface Props {
 
 export const ViewFolder = ({ id, setView }: Props) => {
   const [data, setData] = useState<FolderResponse>();
+
   const [files, setFiles] = useState<DigitalFileResponse[]>([]);
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [open, setOpen] = useState({
     add: false,
     delete: false,
   });
+
   const [error, setError] = useState("");
 
   useEffect(() => {
     const getFolderById = async () => {
       setIsLoading(true);
+
       const response = await getFolder(id);
+
       if (!response.success) {
         setError(`${response.error}`);
+        setIsLoading(false);
         return;
       }
+
       setData(response.data);
+
       if (response.data?.digitalFiles) {
-        setFiles(response.data?.digitalFiles);
+        setFiles(response.data.digitalFiles);
       }
+
       setIsLoading(false);
     };
 
@@ -40,17 +50,34 @@ export const ViewFolder = ({ id, setView }: Props) => {
   }, [id]);
 
   const handleModal = (option: "add" | "delete", value: boolean) => {
-    setOpen((prev) => ({ ...prev, [option]: value }));
+    setOpen((prev) => ({
+      ...prev,
+      [option]: value,
+    }));
   };
 
   const addFile = (file: DigitalFileResponse) => {
-    if (files) setFiles([...files, file]);
-    else setFiles([file]);
+    setFiles((prev) => [...prev, file]);
+  };
+
+  const handleViewFile = (fileId: string) => {
+    const file = files.find((file) => file.id === fileId);
+
+    if (!file) return;
+
+    const filename = file.name.replace(/\.pdf$/i, "").trim();
+
+    window.open(
+      `/api/files/${fileId}/view/${encodeURIComponent(`${filename}.pdf`)}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   };
 
   return (
     <div className="flex flex-col text-gray-900">
       {isLoading && <LoadingScreen />}
+
       {!isLoading && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-row items-center gap-5">
@@ -71,12 +98,15 @@ export const ViewFolder = ({ id, setView }: Props) => {
             >
               <FaArrowLeft className="h-10 w-10" />
             </button>
+
             <span>
               Documentos de la carpeta digital ({data?.name.toUpperCase()})
             </span>
           </div>
+
           <div className="flex flex-row items-center justify-between px-2">
-            <span>Documentos ({files ? files?.length : "0"})</span>
+            <span>Documentos ({files ? files.length : "0"})</span>
+
             <button
               type="button"
               aria-label={`Agregar etapa intermedia`}
@@ -95,26 +125,21 @@ export const ViewFolder = ({ id, setView }: Props) => {
               <FaPlus className="h-4 w-4" />
             </button>
           </div>
+
           <div>
             {files.length > 0 && (
-              <FileContainer
-                data={files}
-                setTarget={function (id: string): void {
-                  throw new Error("Function not implemented.");
-                }}
-              />
+              <FileContainer data={files} setTarget={handleViewFile} />
             )}
           </div>
         </div>
       )}
-      {open.add && (
+
+      {open.add && data && (
         <CreateFileModal
-          item={data!}
+          item={data}
           open={open.add}
           handleModal={handleModal}
-          addFile={function (file: DigitalFileResponse): void {
-            throw new Error("Function not implemented.");
-          }}
+          addFile={addFile}
         />
       )}
     </div>
