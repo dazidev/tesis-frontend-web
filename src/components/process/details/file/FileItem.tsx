@@ -4,9 +4,10 @@ import { FaEye, FaTrash } from "react-icons/fa6";
 interface Props {
   item: DigitalFileResponse;
   setTarget: (id: string) => void;
+  deleteTarget: (id: string) => void;
 }
 
-export const FileItem = ({ item, setTarget }: Props) => {
+export const FileItem = ({ item, setTarget, deleteTarget }: Props) => {
   return (
     <div className="flex flex-row border-1 rounded-sm p-1 px-2 bg-gray-200 items-center justify-between">
       <div className="flex flex-col text-lg">
@@ -46,7 +47,7 @@ export const FileItem = ({ item, setTarget }: Props) => {
                 hover:bg-red-200 hover:text-red-700 focus:outline-none
                 disabled:cursor-not-allowed disabled:opacity-50
               "
-          onClick={() => {}}
+          onClick={() => deleteTarget(item.id)}
         >
           <FaTrash className="h-4 w-4" />
         </button>

@@ -5,6 +5,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FaArrowLeft, FaPlus } from "react-icons/fa6";
 import { FileContainer } from "../file/FileContainer";
 import { CreateFileModal } from "../file/CreateFileModal";
+import toast from "react-hot-toast";
+import { DeleteFileModal } from "../file/DeleteFileModal";
 
 interface Props {
   id: string;
@@ -15,6 +17,8 @@ export const ViewFolder = ({ id, setView }: Props) => {
   const [data, setData] = useState<FolderResponse>();
 
   const [files, setFiles] = useState<DigitalFileResponse[]>([]);
+
+  const [targetFile, setTargetFile] = useState<DigitalFileResponse>();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -60,6 +64,10 @@ export const ViewFolder = ({ id, setView }: Props) => {
     setFiles((prev) => [...prev, file]);
   };
 
+  const removeFile = (fileId: string) => {
+    setFiles((prev) => prev.filter((file) => file.id !== fileId));
+  };
+
   const handleViewFile = (fileId: string) => {
     const file = files.find((file) => file.id === fileId);
 
@@ -72,6 +80,16 @@ export const ViewFolder = ({ id, setView }: Props) => {
       "_blank",
       "noopener,noreferrer",
     );
+  };
+
+  const handleDeleteTarget = (fileId: string) => {
+    const file = files.find((file) => file.id === fileId);
+
+    if (!file) return;
+
+    setTargetFile(file);
+
+    handleModal("delete", true);
   };
 
   return (
@@ -128,7 +146,11 @@ export const ViewFolder = ({ id, setView }: Props) => {
 
           <div>
             {files.length > 0 && (
-              <FileContainer data={files} setTarget={handleViewFile} />
+              <FileContainer
+                data={files}
+                setTarget={handleViewFile}
+                deleteTarget={handleDeleteTarget}
+              />
             )}
           </div>
         </div>
@@ -140,6 +162,14 @@ export const ViewFolder = ({ id, setView }: Props) => {
           open={open.add}
           handleModal={handleModal}
           addFile={addFile}
+        />
+      )}
+      {open.delete && targetFile && (
+        <DeleteFileModal
+          file={targetFile}
+          open={open.delete}
+          handleModal={handleModal}
+          removeFile={removeFile}
         />
       )}
     </div>
