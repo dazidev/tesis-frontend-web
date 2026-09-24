@@ -96,12 +96,14 @@ export const ViewFolder = ({ id, setView }: Props) => {
             </button>
           </div>
           <div>
-            <FileContainer
-              data={files}
-              setTarget={function (id: string): void {
-                throw new Error("Function not implemented.");
-              }}
-            />
+            {files.length > 0 && (
+              <FileContainer
+                data={files}
+                setTarget={function (id: string): void {
+                  throw new Error("Function not implemented.");
+                }}
+              />
+            )}
           </div>
         </div>
       )}
