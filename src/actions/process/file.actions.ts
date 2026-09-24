@@ -1,7 +1,11 @@
 "use server";
 
 import { serverApi } from "@/infrastructure/lib/api/server-api";
-import { NextServerResponse } from "@/interfaces";
+import {
+  DigitalFileResponse,
+  NextServerResponse,
+  UpdateDigitalFileRequest,
+} from "@/interfaces";
 
 export async function uploadFile(
   folderId: string,
@@ -38,6 +42,26 @@ export async function deleteFile(
     return {
       success: false,
       error: "Hubo un problema al eliminar el archivo.",
+    };
+  }
+}
+
+export async function updateFile(
+  fileId: string,
+  data: UpdateDigitalFileRequest,
+): Promise<NextServerResponse<DigitalFileResponse>> {
+  try {
+    const response = await serverApi.patch(`/folder/file/${fileId}`, data);
+
+    return {
+      success: true,
+      message: "El archivo ha sido actualizado correctamente.",
+      data: response.data,
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al actualizar el archivo.",
     };
   }
 }

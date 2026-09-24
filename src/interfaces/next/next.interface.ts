@@ -80,3 +80,8 @@ export interface CreateDigitalFileRequest {
   name: string;
   description: string;
 }
+
+export interface UpdateDigitalFileRequest {
+  name: string;
+  description: string;
+}

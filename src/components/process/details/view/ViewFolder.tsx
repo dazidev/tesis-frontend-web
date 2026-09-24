@@ -4,8 +4,7 @@ import { DigitalFileResponse, FolderResponse } from "@/interfaces";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FaArrowLeft, FaPlus } from "react-icons/fa6";
 import { FileContainer } from "../file/FileContainer";
-import { CreateFileModal } from "../file/CreateFileModal";
-import toast from "react-hot-toast";
+import { CreateUpdateFileModal } from "../file/CreateUpdateFileModal";
 import { DeleteFileModal } from "../file/DeleteFileModal";
 
 interface Props {
@@ -24,6 +23,7 @@ export const ViewFolder = ({ id, setView }: Props) => {
 
   const [open, setOpen] = useState({
     add: false,
+    update: false,
     delete: false,
   });
 
@@ -53,7 +53,7 @@ export const ViewFolder = ({ id, setView }: Props) => {
     getFolderById();
   }, [id]);
 
-  const handleModal = (option: "add" | "delete", value: boolean) => {
+  const handleModal = (option: "add" | "update" | "delete", value: boolean) => {
     setOpen((prev) => ({
       ...prev,
       [option]: value,
@@ -79,6 +79,22 @@ export const ViewFolder = ({ id, setView }: Props) => {
       `/api/files/${fileId}/view/${encodeURIComponent(`${filename}.pdf`)}`,
       "_blank",
       "noopener,noreferrer",
+    );
+  };
+
+  const handleUpdateTarget = (fileId: string) => {
+    const file = files.find((file) => file.id === fileId);
+
+    if (!file) return;
+
+    setTargetFile(file);
+
+    handleModal("update", true);
+  };
+
+  const updateFileState = (updatedFile: DigitalFileResponse) => {
+    setFiles((prev) =>
+      prev.map((file) => (file.id === updatedFile.id ? updatedFile : file)),
     );
   };
 
@@ -149,6 +165,7 @@ export const ViewFolder = ({ id, setView }: Props) => {
               <FileContainer
                 data={files}
                 setTarget={handleViewFile}
+                updateTarget={handleUpdateTarget}
                 deleteTarget={handleDeleteTarget}
               />
             )}
@@ -157,11 +174,24 @@ export const ViewFolder = ({ id, setView }: Props) => {
       )}
 
       {open.add && data && (
-        <CreateFileModal
+        <CreateUpdateFileModal
+          type={"create"}
           item={data}
           open={open.add}
           handleModal={handleModal}
           addFile={addFile}
+          updateFileState={updateFileState}
+        />
+      )}
+      {open.update && data && targetFile && (
+        <CreateUpdateFileModal
+          type="update"
+          item={data}
+          targetFile={targetFile}
+          open={open.update}
+          handleModal={handleModal}
+          addFile={addFile}
+          updateFileState={updateFileState}
         />
       )}
       {open.delete && targetFile && (

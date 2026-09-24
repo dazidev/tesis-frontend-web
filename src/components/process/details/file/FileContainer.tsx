@@ -4,10 +4,16 @@ import { FileItem } from "./FileItem";
 interface Props {
   data: DigitalFileResponse[] | [];
   setTarget: (id: string) => void;
+  updateTarget: (id: string) => void;
   deleteTarget: (id: string) => void;
 }
 
-export const FileContainer = ({ data, setTarget, deleteTarget }: Props) => {
+export const FileContainer = ({
+  data,
+  setTarget,
+  updateTarget,
+  deleteTarget,
+}: Props) => {
   return (
     <div className="flex flex-col bg-gray-100 border-1 border-lg rounded-lg p-2 gap-2">
       {data &&
@@ -16,6 +22,7 @@ export const FileContainer = ({ data, setTarget, deleteTarget }: Props) => {
             key={folder.id}
             item={folder}
             setTarget={setTarget}
+            updateTarget={updateTarget}
             deleteTarget={deleteTarget}
           />
         ))}

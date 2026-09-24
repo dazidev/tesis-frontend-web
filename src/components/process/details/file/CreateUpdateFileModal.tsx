@@ -1,22 +1,17 @@
 "use client";
 
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
 import { useRouter } from "next/navigation";
-
 import {
   CreateDigitalFileRequest,
   DigitalFileResponse,
   FolderResponse,
+  UpdateDigitalFileRequest,
 } from "@/interfaces";
-
 import { CustomModal } from "@/components/common/modal/CustomModal";
-
 import { CustomInput } from "@/components/common";
-
-import { uploadFile } from "@/actions";
+import { updateFile, uploadFile } from "@/actions";
 
 const InitialCreateFileForm: CreateDigitalFileRequest = {
   name: "",
@@ -25,15 +20,23 @@ const InitialCreateFileForm: CreateDigitalFileRequest = {
 
 interface Props {
   item: FolderResponse;
-
+  targetFile?: DigitalFileResponse;
+  type: "create" | "update";
   open: boolean;
-
-  handleModal: (option: "add" | "delete", value: boolean) => void;
-
+  handleModal: (option: "add" | "update" | "delete", value: boolean) => void;
   addFile: (file: DigitalFileResponse) => void;
+  updateFileState: (file: DigitalFileResponse) => void;
 }
 
-export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
+export function CreateUpdateFileModal({
+  item,
+  targetFile,
+  type,
+  open,
+  handleModal,
+  addFile,
+  updateFileState,
+}: Props) {
   const [form, setForm] = useState<CreateDigitalFileRequest>(
     InitialCreateFileForm,
   );
@@ -41,6 +44,19 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
   const [file, setFile] = useState<File | null>(null);
 
   const router = useRouter();
+
+  useEffect(() => {
+    if (type === "update" && targetFile) {
+      setForm({
+        name: targetFile.name,
+        description: targetFile.description,
+      });
+
+      return;
+    }
+
+    setForm(InitialCreateFileForm);
+  }, [type, targetFile]);
 
   const handleProcess = (
     value: any,
@@ -94,10 +110,12 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
   const handleClose = () => {
     cleanForm();
 
-    handleModal("add", false);
+    handleModal(type === "create" ? "add" : "update", false);
   };
 
-  const handleCreateFile = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleCreateUpdateFile = async (
+    e: React.SubmitEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
 
     try {
@@ -107,31 +125,50 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
       if (!form.description || form.description.length <= 1)
         throw new Error("Ingrese la descripción.");
 
-      if (!file) throw new Error("Seleccione un archivo PDF.");
+      if (type === "create") {
+        if (!file) throw new Error("Seleccione un archivo PDF.");
 
-      if (file.type !== "application/pdf")
-        throw new Error("El archivo debe ser un PDF.");
+        if (file.type !== "application/pdf")
+          throw new Error("El archivo debe ser un PDF.");
 
-      const maxFileSize = 10 * 1024 * 1024;
+        const maxFileSize = 10 * 1024 * 1024;
 
-      if (file.size > maxFileSize)
-        throw new Error("El archivo no puede superar los 10 MB.");
+        if (file.size > maxFileSize)
+          throw new Error("El archivo no puede superar los 10 MB.");
 
-      const formData = new FormData();
+        const formData = new FormData();
 
-      formData.append("name", form.name);
+        formData.append("name", form.name);
 
-      formData.append("description", form.description);
+        formData.append("description", form.description);
 
-      formData.append("file", file);
+        formData.append("file", file);
 
-      const response = await uploadFile(item.id, formData);
+        const response = await uploadFile(item.id, formData);
 
-      if (!response.success) throw new Error(response.error);
+        if (!response.success) throw new Error(response.error);
 
-      toast.success(`${response.message}`);
+        toast.success(`${response.message}`);
 
-      addFile(response.data!);
+        addFile(response.data!);
+      }
+
+      if (type === "update") {
+        if (!targetFile) throw new Error("Archivo no encontrado.");
+
+        const data: UpdateDigitalFileRequest = {
+          name: form.name,
+          description: form.description,
+        };
+
+        const response = await updateFile(targetFile.id, data);
+
+        if (!response.success) throw new Error(response.error);
+
+        toast.success(`${response.message}`);
+
+        updateFileState(response.data!);
+      }
 
       handleClose();
 
@@ -143,9 +180,11 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
         return;
       }
 
-      toast.error("Hubo un error desconocido al subir el archivo.");
-
-      return;
+      toast.error(
+        `Hubo un error desconocido al ${
+          type === "create" ? "subir" : "actualizar"
+        } el archivo.`,
+      );
     }
   };
 
@@ -153,7 +192,7 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
     <>
       <CustomModal
         open={open}
-        title={`Subir archivo`}
+        title={type === "create" ? "Subir archivo" : "Editar archivo"}
         onClose={() => handleClose()}
         width="max-w-sm"
         footer={
@@ -171,7 +210,7 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
               form="create-file-form"
               className="cursor-pointer rounded-md bg-black px-4 py-2 text-sm text-white"
             >
-              Subir
+              {type === "create" ? "Subir" : "Actualizar"}
             </button>
           </>
         }
@@ -179,7 +218,7 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
         <form
           id="create-file-form"
           className="space-y-4"
-          onSubmit={handleCreateFile}
+          onSubmit={handleCreateUpdateFile}
         >
           <CustomInput
             id={"name"}
@@ -206,25 +245,26 @@ export function CreateFileModal({ item, open, handleModal, addFile }: Props) {
               className="w-full resize-none rounded-lg border border-pborder p-2 text-black/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-pblue"
             />
           </div>
+          {type === "create" && (
+            <div className="flex flex-col gap-1">
+              <label htmlFor="file" className="text-sm text-gray-900">
+                Archivo PDF
+              </label>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="file" className="text-sm text-gray-900">
-              Archivo PDF
-            </label>
+              <input
+                id="file"
+                type="file"
+                accept=".pdf,application/pdf"
+                onChange={handleFile}
+                required
+                className="w-full cursor-pointer rounded-lg border border-pborder p-2 text-sm text-black/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-pblue"
+              />
 
-            <input
-              id="file"
-              type="file"
-              accept=".pdf,application/pdf"
-              onChange={handleFile}
-              required
-              className="w-full cursor-pointer rounded-lg border border-pborder p-2 text-sm text-black/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-pblue"
-            />
-
-            <span className="text-xs text-gray-500">
-              Solo archivos PDF. Tamaño máximo: 10 MB.
-            </span>
-          </div>
+              <span className="text-xs text-gray-500">
+                Solo archivos PDF. Tamaño máximo: 10 MB.
+              </span>
+            </div>
+          )}
         </form>
       </CustomModal>
     </>
