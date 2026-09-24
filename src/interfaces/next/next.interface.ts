@@ -75,3 +75,8 @@ export interface CreateFolderRequest {
 export interface GetFolderRequest {
   substageId?: string;
 }
+
+export interface CreateDigitalFileRequest {
+  name: string;
+  description: string;
+}

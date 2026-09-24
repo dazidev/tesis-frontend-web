@@ -4,38 +4,21 @@ import { DigitalFileResponse, FolderResponse } from "@/interfaces";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FaArrowLeft, FaPlus } from "react-icons/fa6";
 import { FileContainer } from "../file/FileContainer";
+import { CreateFileModal } from "../file/CreateFileModal";
 
 interface Props {
   id: string;
   setView: Dispatch<SetStateAction<"general" | "folder">>;
 }
 
-const fileExample: DigitalFileResponse[] = [
-  {
-    id: "asdas",
-    name: "Acta de nacimiento",
-    description: "Acta de nacimiento de Daniel",
-    createdAt: new Date("12-18-2023"),
-    updatedAt: null,
-    deletedAt: null,
-    createdById: "sdfsdf",
-    digitalFolderId: "folder 3",
-  },
-  {
-    id: "asdas",
-    name: "Acta de nacimiento",
-    description: "Acta de nacimiento de Eduardo",
-    createdAt: new Date("12-18-2023"),
-    updatedAt: null,
-    deletedAt: null,
-    createdById: "sdfsdf",
-    digitalFolderId: "folder 3",
-  },
-];
-
 export const ViewFolder = ({ id, setView }: Props) => {
   const [data, setData] = useState<FolderResponse>();
+  const [files, setFiles] = useState<DigitalFileResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState({
+    add: false,
+    delete: false,
+  });
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -47,11 +30,23 @@ export const ViewFolder = ({ id, setView }: Props) => {
         return;
       }
       setData(response.data);
+      if (response.data?.digitalFiles) {
+        setFiles(response.data?.digitalFiles);
+      }
       setIsLoading(false);
     };
 
     getFolderById();
   }, [id]);
+
+  const handleModal = (option: "add" | "delete", value: boolean) => {
+    setOpen((prev) => ({ ...prev, [option]: value }));
+  };
+
+  const addFile = (file: DigitalFileResponse) => {
+    if (files) setFiles([...files, file]);
+    else setFiles([file]);
+  };
 
   return (
     <div className="flex flex-col text-gray-900">
@@ -81,7 +76,7 @@ export const ViewFolder = ({ id, setView }: Props) => {
             </span>
           </div>
           <div className="flex flex-row items-center justify-between px-2">
-            <span>Documentos ({fileExample.length})</span>
+            <span>Documentos ({files ? files?.length : "0"})</span>
             <button
               type="button"
               aria-label={`Agregar etapa intermedia`}
@@ -95,20 +90,30 @@ export const ViewFolder = ({ id, setView }: Props) => {
                 hover:bg-green-100 hover:text-green-900 focus:outline-none
                 disabled:cursor-not-allowed disabled:opacity-50
               "
-              onClick={() => {}}
+              onClick={() => handleModal("add", true)}
             >
               <FaPlus className="h-4 w-4" />
             </button>
           </div>
           <div>
             <FileContainer
-              data={fileExample}
+              data={files}
               setTarget={function (id: string): void {
                 throw new Error("Function not implemented.");
               }}
             />
           </div>
         </div>
+      )}
+      {open.add && (
+        <CreateFileModal
+          item={data!}
+          open={open.add}
+          handleModal={handleModal}
+          addFile={function (file: DigitalFileResponse): void {
+            throw new Error("Function not implemented.");
+          }}
+        />
       )}
     </div>
   );
