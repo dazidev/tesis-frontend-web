@@ -129,6 +129,7 @@ export interface ProcessStageResponse {
   processId: string;
   updatedAt: Date;
   digitalFolders: BasicDigitalFolderResponse[];
+  tasks: TaskResponse[];
 }
 
 export interface ProcessSubstageResponse {
@@ -140,6 +141,7 @@ export interface ProcessSubstageResponse {
   stageId: string;
   parentSubstageId: string | null;
   digitalFolders: BasicDigitalFolderResponse[];
+  tasks: TaskResponse[];
 }
 
 export interface BasicDigitalFolderResponse {
@@ -184,4 +186,20 @@ export interface ProcessByIdResponse {
   defendantId: string;
   defendant: Defendant;
   stages: ProcessStage[];
+}
+
+export interface TaskResponse {
+  id: string;
+  description: string;
+  dueDate: string;
+  completedAt: string | null;
+
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+
+  createdById: string;
+
+  stageId: string;
+  substageId: string | null;
 }

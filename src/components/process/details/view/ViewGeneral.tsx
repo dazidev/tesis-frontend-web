@@ -4,6 +4,7 @@ import { FolderContainer } from "../FolderContainer";
 import { OptionModalFolder } from "../ViewStageOrSubModal";
 import { ProcessStageResponse, ProcessSubstageResponse } from "@/interfaces";
 import { FaPlus } from "react-icons/fa6";
+import { TaskContainer } from "../task/TaskContainer";
 
 interface Props {
   data: ProcessStageResponse | ProcessSubstageResponse;
@@ -12,6 +13,7 @@ interface Props {
   setTarget: (id: string) => void;
   updateTarget: (id: string) => void;
   deleteTarget: (id: string) => void;
+  handleCreateTask: () => void;
 }
 
 export const ViewGeneral = ({
@@ -21,6 +23,7 @@ export const ViewGeneral = ({
   setTarget,
   updateTarget,
   deleteTarget,
+  handleCreateTask,
 }: Props) => {
   return (
     <div className="flex flex-col text-gray-900">
@@ -67,6 +70,33 @@ export const ViewGeneral = ({
                 updateTarget={updateTarget}
                 deleteTarget={deleteTarget}
               />
+            )}
+          </div>
+          <div className="mt-2 flex flex-col gap-2">
+            <div className="flex flex-row items-center justify-between px-2">
+              <span>Tareas ({data?.tasks?.length ?? 0})</span>
+
+              <button
+                type="button"
+                aria-label="Agregar tarea"
+                title="Agregar tarea"
+                className="
+                  flex h-7 w-7 items-center justify-center rounded-md
+                  border border-green-300
+                  bg-green-50 text-green-700
+                  cursor-pointer
+                  transition-colors duration-200
+                  hover:bg-green-100 hover:text-green-900 focus:outline-none
+                  disabled:cursor-not-allowed disabled:opacity-50
+                "
+                onClick={handleCreateTask}
+              >
+                <FaPlus className="h-4 w-4" />
+              </button>
+            </div>
+
+            {data?.tasks && data.tasks.length > 0 && (
+              <TaskContainer data={data.tasks} />
             )}
           </div>
         </div>

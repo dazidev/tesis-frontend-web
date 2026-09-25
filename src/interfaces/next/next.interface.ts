@@ -92,3 +92,9 @@ export interface UpdateFolderRequest {
   name: string;
   description: string;
 }
+
+export interface CreateTaskRequest {
+  description: string;
+  dueDate: string;
+  substageId?: string;
+}

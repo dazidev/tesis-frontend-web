@@ -7,6 +7,7 @@ import {
   ProcessStageResponse,
   ProcessSubstageResponse,
   SubstageNode,
+  TaskResponse,
 } from "@/interfaces";
 import { useEffect, useState } from "react";
 import { OptionModal } from "../ProcessMapView";
@@ -15,6 +16,7 @@ import { ViewGeneral } from "./view/ViewGeneral";
 import { ViewFolder } from "./view/ViewFolder";
 import { CreateUpdateFolderModal } from "./CreateUpdateFolderModal";
 import { DeleteFolderModal } from "./DeleteFolderModal";
+import { CreateTaskModal } from "./task/CreateTaskModal";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";
@@ -51,6 +53,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   const [target, setTarget] = useState<string>("");
   const [targetFolder, setTargetFolder] =
     useState<BasicDigitalFolderResponse>();
+  const [openCreateTask, setOpenCreateTask] = useState(false);
 
   useEffect(() => {
     if (!open || !item) return;
@@ -171,6 +174,21 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     });
   };
 
+  const addTask = (task: TaskResponse) => {
+    setData((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+
+        tasks: [...prev.tasks, task].sort(
+          (a, b) =>
+            new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+        ),
+      };
+    });
+  };
+
   if (!open) return null;
   return (
     <>
@@ -197,6 +215,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
             setTarget={handleSetTarget}
             updateTarget={handleUpdateFolderTarget}
             deleteTarget={handleDeleteFolderTarget}
+            handleCreateTask={() => setOpenCreateTask(true)}
           />
         ) : (
           <ViewFolder id={target} setView={setView} />
@@ -229,6 +248,14 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
           open={openModal.deleteFolder}
           handleModal={handleModalFolder}
           removeFolder={removeFolder}
+        />
+      )}
+      {openCreateTask && (
+        <CreateTaskModal
+          item={item}
+          open={openCreateTask}
+          close={() => setOpenCreateTask(false)}
+          addTask={addTask}
         />
       )}
     </>

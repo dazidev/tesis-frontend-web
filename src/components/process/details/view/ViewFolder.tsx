@@ -1,3 +1,4 @@
+"use client";
 import { getFolder } from "@/actions";
 import { LoadingScreen } from "@/components/common";
 import { DigitalFileResponse, FolderResponse } from "@/interfaces";
