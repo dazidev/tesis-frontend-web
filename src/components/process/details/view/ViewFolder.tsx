@@ -20,7 +20,7 @@ export const ViewFolder = ({ id, setView }: Props) => {
 
   const [targetFile, setTargetFile] = useState<DigitalFileResponse>();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [open, setOpen] = useState({
     add: false,
@@ -32,8 +32,6 @@ export const ViewFolder = ({ id, setView }: Props) => {
 
   useEffect(() => {
     const getFolderById = async () => {
-      setIsLoading(true);
-
       const response = await getFolder(id);
 
       if (!response.success) {
@@ -41,6 +39,10 @@ export const ViewFolder = ({ id, setView }: Props) => {
         setIsLoading(false);
         return;
       }
+
+      //! todo: remove
+      console.log("getFolder response:", response);
+      console.log("folder data:", response.data);
 
       setData(response.data);
 
@@ -135,7 +137,8 @@ export const ViewFolder = ({ id, setView }: Props) => {
             </button>
 
             <span>
-              Documentos de la carpeta digital ({data?.name.toUpperCase()})
+              Documentos de la carpeta digital (
+              {data?.name?.toUpperCase() ?? ""})
             </span>
           </div>
 

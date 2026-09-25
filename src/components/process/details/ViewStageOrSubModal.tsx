@@ -1,5 +1,5 @@
 "use client";
-import { getStage, getSubStage } from "@/actions";
+import { getStage, getSubStage, updateTaskCompletion } from "@/actions";
 import {
   BasicDigitalFolderResponse,
   FolderResponse,
@@ -16,7 +16,9 @@ import { ViewGeneral } from "./view/ViewGeneral";
 import { ViewFolder } from "./view/ViewFolder";
 import { CreateUpdateFolderModal } from "./CreateUpdateFolderModal";
 import { DeleteFolderModal } from "./DeleteFolderModal";
-import { CreateTaskModal } from "./task/CreateTaskModal";
+import toast from "react-hot-toast";
+import { CreateUpdateTaskModal } from "./task/CreateUpdateTaskModal";
+import { DeleteTaskModal } from "./task/DeleteTaskModal";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";
@@ -53,7 +55,17 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   const [target, setTarget] = useState<string>("");
   const [targetFolder, setTargetFolder] =
     useState<BasicDigitalFolderResponse>();
-  const [openCreateTask, setOpenCreateTask] = useState(false);
+  interface OptionModalTask {
+    createTask: boolean;
+    updateTask: boolean;
+    deleteTask: boolean;
+  }
+  const [openModalTask, setOpenModalTask] = useState<OptionModalTask>({
+    createTask: false,
+    updateTask: false,
+    deleteTask: false,
+  });
+  const [targetTask, setTargetTask] = useState<TaskResponse>();
 
   useEffect(() => {
     if (!open || !item) return;
@@ -86,6 +98,13 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     value: boolean,
   ) => {
     setOpenModal((prev) => ({ ...prev, [option]: value }));
+  };
+
+  const handleModalTask = (option: keyof OptionModalTask, value: boolean) => {
+    setOpenModalTask((prev) => ({
+      ...prev,
+      [option]: value,
+    }));
   };
 
   const handleSetTarget = (id: string) => {
@@ -189,6 +208,89 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     });
   };
 
+  const handleTaskCompletion = async (taskId: string, completed: boolean) => {
+    try {
+      const response = await updateTaskCompletion(taskId, {
+        completed,
+      });
+
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+
+      setData((prev) => {
+        if (!prev) return prev;
+
+        return {
+          ...prev,
+
+          tasks: prev.tasks.map((task) =>
+            task.id === taskId ? response.data! : task,
+          ),
+        };
+      });
+
+      toast.success(response.message!);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+
+        return;
+      }
+
+      toast.error("Hubo un error al actualizar la tarea.");
+    }
+  };
+
+  const handleUpdateTaskTarget = (taskId: string) => {
+    const task = data?.tasks.find((task) => task.id === taskId);
+
+    if (!task) return;
+
+    setTargetTask(task);
+
+    handleModalTask("updateTask", true);
+  };
+
+  const updateTaskState = (updatedTask: TaskResponse) => {
+    setData((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+
+        tasks: prev.tasks
+          .map((task) => (task.id === updatedTask.id ? updatedTask : task))
+          .sort(
+            (a, b) =>
+              new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
+          ),
+      };
+    });
+  };
+
+  const handleDeleteTaskTarget = (taskId: string) => {
+    const task = data?.tasks.find((task) => task.id === taskId);
+
+    if (!task) return;
+
+    setTargetTask(task);
+
+    handleModalTask("deleteTask", true);
+  };
+
+  const removeTask = (taskId: string) => {
+    setData((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+
+        tasks: prev.tasks.filter((task) => task.id !== taskId),
+      };
+    });
+  };
+
   if (!open) return null;
   return (
     <>
@@ -215,7 +317,10 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
             setTarget={handleSetTarget}
             updateTarget={handleUpdateFolderTarget}
             deleteTarget={handleDeleteFolderTarget}
-            handleCreateTask={() => setOpenCreateTask(true)}
+            handleCreateTask={() => handleModalTask("createTask", true)}
+            updateTaskCompletion={handleTaskCompletion}
+            updateTaskTarget={handleUpdateTaskTarget}
+            deleteTaskTarget={handleDeleteTaskTarget}
           />
         ) : (
           <ViewFolder id={target} setView={setView} />
@@ -250,12 +355,41 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
           removeFolder={removeFolder}
         />
       )}
-      {openCreateTask && (
-        <CreateTaskModal
+      {openModalTask.createTask && (
+        <CreateUpdateTaskModal
+          type="create"
           item={item}
-          open={openCreateTask}
-          close={() => setOpenCreateTask(false)}
+          open={openModalTask.createTask}
+          close={() => handleModalTask("createTask", false)}
           addTask={addTask}
+          updateTaskState={updateTaskState}
+        />
+      )}
+      {openModalTask.updateTask && targetTask && (
+        <CreateUpdateTaskModal
+          type="update"
+          item={item}
+          targetTask={targetTask}
+          open={openModalTask.updateTask}
+          close={() => {
+            handleModalTask("updateTask", false);
+
+            setTargetTask(undefined);
+          }}
+          addTask={addTask}
+          updateTaskState={updateTaskState}
+        />
+      )}
+      {openModalTask.deleteTask && targetTask && (
+        <DeleteTaskModal
+          task={targetTask}
+          open={openModalTask.deleteTask}
+          close={() => {
+            handleModalTask("deleteTask", false);
+
+            setTargetTask(undefined);
+          }}
+          removeTask={removeTask}
         />
       )}
     </>

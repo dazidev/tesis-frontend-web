@@ -14,6 +14,9 @@ interface Props {
   updateTarget: (id: string) => void;
   deleteTarget: (id: string) => void;
   handleCreateTask: () => void;
+  updateTaskCompletion: (id: string, completed: boolean) => void;
+  updateTaskTarget: (id: string) => void;
+  deleteTaskTarget: (id: string) => void;
 }
 
 export const ViewGeneral = ({
@@ -24,6 +27,9 @@ export const ViewGeneral = ({
   updateTarget,
   deleteTarget,
   handleCreateTask,
+  updateTaskCompletion,
+  updateTaskTarget,
+  deleteTaskTarget,
 }: Props) => {
   return (
     <div className="flex flex-col text-gray-900">
@@ -96,7 +102,12 @@ export const ViewGeneral = ({
             </div>
 
             {data?.tasks && data.tasks.length > 0 && (
-              <TaskContainer data={data.tasks} />
+              <TaskContainer
+                data={data.tasks}
+                updateCompletion={updateTaskCompletion}
+                updateTarget={updateTaskTarget}
+                deleteTarget={deleteTaskTarget}
+              />
             )}
           </div>
         </div>

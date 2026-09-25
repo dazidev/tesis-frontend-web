@@ -43,6 +43,8 @@ export interface SubStageDeactivationRequest extends DeactivationRequest {}
 
 export interface FolderDeactivationRequest extends DeactivationRequest {}
 
+export interface TaskDeactivationRequest extends DeactivationRequest {}
+
 export interface CreateProcessRequest {
   courtNumber: string;
   caseFileNumber: string;
@@ -97,4 +99,13 @@ export interface CreateTaskRequest {
   description: string;
   dueDate: string;
   substageId?: string;
+}
+
+export interface UpdateTaskCompletionRequest {
+  completed: boolean;
+}
+
+export interface UpdateTaskRequest {
+  description: string;
+  dueDate: string;
 }

@@ -1,10 +1,19 @@
 import { TaskResponse } from "@/interfaces";
+import { FaPen, FaTrash } from "react-icons/fa6";
 
 interface Props {
   item: TaskResponse;
+  updateCompletion: (id: string, completed: boolean) => void;
+  updateTarget: (id: string) => void;
+  deleteTarget: (id: string) => void;
 }
 
-export const TaskItem = ({ item }: Props) => {
+export const TaskItem = ({
+  item,
+  updateCompletion,
+  updateTarget,
+  deleteTarget,
+}: Props) => {
   const dueDate = new Date(item.dueDate);
 
   const formattedDate = dueDate.toLocaleString("es-MX", {
@@ -23,7 +32,7 @@ export const TaskItem = ({ item }: Props) => {
         <input
           type="checkbox"
           checked={completed}
-          readOnly
+          onChange={(e) => updateCompletion(item.id, e.target.checked)}
           className="h-4 w-4"
         />
 
@@ -38,6 +47,42 @@ export const TaskItem = ({ item }: Props) => {
 
           <span className="text-sm text-gray-500">Vence: {formattedDate}</span>
         </div>
+      </div>
+      <div className="flex flex-row gap-1">
+        <button
+          type="button"
+          aria-label="Editar tarea"
+          title="Editar tarea"
+          className="
+            flex h-8 w-8 items-center justify-center rounded-md
+            border border-gray-400
+            bg-gray-50 text-gray-700
+            cursor-pointer
+            transition-colors duration-200
+            hover:bg-gray-100 hover:text-gray-900 focus:outline-none
+            disabled:cursor-not-allowed disabled:opacity-50
+          "
+          onClick={() => updateTarget(item.id)}
+        >
+          <FaPen className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          aria-label="Eliminar tarea"
+          title="Eliminar tarea"
+          className="
+            flex h-8 w-8 items-center justify-center rounded-md
+            border border-red-300
+            bg-red-100 text-red-600
+            cursor-pointer
+            transition-colors duration-200
+            hover:bg-red-200 hover:text-red-700 focus:outline-none
+            disabled:cursor-not-allowed disabled:opacity-50
+          "
+          onClick={() => deleteTarget(item.id)}
+        >
+          <FaTrash className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );

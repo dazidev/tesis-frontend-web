@@ -1,40 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   CreateTaskRequest,
   ProcessStage,
   SubstageNode,
   TaskResponse,
+  UpdateTaskRequest,
 } from "@/interfaces";
 import { CustomModal } from "@/components/common/modal/CustomModal";
-import { createTask } from "@/actions";
+import { createTask, updateTask } from "@/actions";
 import { isSubstageNode } from "@/components/common/modal/processes/CreateSubStageModal";
+
 interface Props {
   item: ProcessStage | SubstageNode;
+
+  targetTask?: TaskResponse;
+
+  type: "create" | "update";
 
   open: boolean;
 
   close: () => void;
 
   addTask: (task: TaskResponse) => void;
+
+  updateTaskState: (task: TaskResponse) => void;
 }
 
-interface CreateTaskForm {
+interface TaskForm {
   description: string;
   dueDate: string;
 }
 
-const InitialCreateTaskForm: CreateTaskForm = {
+const InitialTaskForm: TaskForm = {
   description: "",
   dueDate: "",
 };
 
-export function CreateTaskModal({ item, open, close, addTask }: Props) {
-  const [form, setForm] = useState<CreateTaskForm>(InitialCreateTaskForm);
+//! todo: move this helper
+const getDateTimeLocalValue = (value: string) => {
+  const date = new Date(value);
 
-  const handleProcess = (value: string, option: keyof CreateTaskForm) => {
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+
+  return localDate.toISOString().slice(0, 16);
+};
+
+export function CreateUpdateTaskModal({
+  item,
+  targetTask,
+  type,
+  open,
+  close,
+  addTask,
+  updateTaskState,
+}: Props) {
+  const [form, setForm] = useState<TaskForm>(InitialTaskForm);
+
+  useEffect(() => {
+    if (type === "update" && targetTask) {
+      setForm({
+        description: targetTask.description,
+
+        dueDate: getDateTimeLocalValue(targetTask.dueDate),
+      });
+
+      return;
+    }
+
+    setForm(InitialTaskForm);
+  }, [type, targetTask]);
+
+  const handleProcess = (value: string, option: keyof TaskForm) => {
     setForm((prev) => ({
       ...prev,
       [option]: value,
@@ -42,7 +81,7 @@ export function CreateTaskModal({ item, open, close, addTask }: Props) {
   };
 
   const cleanForm = () => {
-    setForm(InitialCreateTaskForm);
+    setForm(InitialTaskForm);
   };
 
   const handleClose = () => {
@@ -51,7 +90,9 @@ export function CreateTaskModal({ item, open, close, addTask }: Props) {
     close();
   };
 
-  const handleCreateTask = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const handleCreateUpdateTask = async (
+    e: React.SubmitEvent<HTMLFormElement>,
+  ) => {
     e.preventDefault();
 
     try {
@@ -65,31 +106,55 @@ export function CreateTaskModal({ item, open, close, addTask }: Props) {
 
       const selectedDate = new Date(form.dueDate);
 
-      if (selectedDate.getTime() <= Date.now()) {
-        throw new Error(
-          "La fecha límite debe ser posterior a la fecha actual.",
-        );
+      if (type === "create") {
+        if (selectedDate.getTime() <= Date.now()) {
+          throw new Error(
+            "La fecha límite debe ser posterior a la fecha actual.",
+          );
+        }
+
+        const data: CreateTaskRequest = {
+          description: form.description,
+
+          dueDate: selectedDate.toISOString(),
+
+          substageId: isSubstageNode(item) ? item.id : undefined,
+        };
+
+        const stageId = isSubstageNode(item) ? item.stageId : item.id;
+
+        const response = await createTask(stageId, data);
+
+        if (!response.success) {
+          throw new Error(response.error);
+        }
+
+        toast.success(response.message!);
+
+        addTask(response.data!);
       }
 
-      const data: CreateTaskRequest = {
-        description: form.description,
+      if (type === "update") {
+        if (!targetTask) {
+          throw new Error("Tarea no encontrada.");
+        }
 
-        dueDate: selectedDate.toISOString(),
+        const data: UpdateTaskRequest = {
+          description: form.description,
 
-        substageId: isSubstageNode(item) ? item.id : undefined,
-      };
+          dueDate: selectedDate.toISOString(),
+        };
 
-      const stageId = isSubstageNode(item) ? item.stageId : item.id;
+        const response = await updateTask(targetTask.id, data);
 
-      const response = await createTask(stageId, data);
+        if (!response.success) {
+          throw new Error(response.error);
+        }
 
-      if (!response.success) {
-        throw new Error(response.error);
+        toast.success(response.message!);
+
+        updateTaskState(response.data!);
       }
-
-      toast.success(response.message!);
-
-      addTask(response.data!);
 
       handleClose();
     } catch (error: unknown) {
@@ -99,7 +164,11 @@ export function CreateTaskModal({ item, open, close, addTask }: Props) {
         return;
       }
 
-      toast.error("Hubo un error desconocido al crear la tarea.");
+      toast.error(
+        `Hubo un error desconocido al ${
+          type === "create" ? "crear" : "actualizar"
+        } la tarea.`,
+      );
     }
   };
 
@@ -108,7 +177,7 @@ export function CreateTaskModal({ item, open, close, addTask }: Props) {
       {open && (
         <CustomModal
           open={open}
-          title="Crear tarea"
+          title={type === "create" ? "Crear tarea" : "Editar tarea"}
           onClose={() => handleClose()}
           width="max-w-sm"
           footer={
@@ -123,18 +192,18 @@ export function CreateTaskModal({ item, open, close, addTask }: Props) {
 
               <button
                 type="submit"
-                form="create-task-form"
+                form="create-update-task-form"
                 className="cursor-pointer rounded-md bg-black px-4 py-2 text-sm text-white"
               >
-                Crear
+                {type === "create" ? "Crear" : "Actualizar"}
               </button>
             </>
           }
         >
           <form
-            id="create-task-form"
+            id="create-update-task-form"
             className="space-y-4"
-            onSubmit={handleCreateTask}
+            onSubmit={handleCreateUpdateTask}
           >
             <div className="flex flex-col gap-1">
               <label htmlFor="description" className="text-sm text-gray-900">
