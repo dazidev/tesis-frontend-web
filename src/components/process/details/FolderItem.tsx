@@ -1,9 +1,10 @@
 import { BasicDigitalFolderResponse } from "@/interfaces";
-import { FaEye, FaTrash } from "react-icons/fa6";
+import { FaEye, FaPen, FaTrash } from "react-icons/fa6";
 
 interface Props {
   item: BasicDigitalFolderResponse;
   setTarget: (id: string) => void;
+  updateTarget: (id: string) => void;
 }
 
 const getDocument = (number: number): string => {
@@ -13,7 +14,7 @@ const getDocument = (number: number): string => {
   return `${number} documentos`;
 };
 
-export const FolderItem = ({ item, setTarget }: Props) => {
+export const FolderItem = ({ item, setTarget, updateTarget }: Props) => {
   return (
     <div className="flex flex-row border-1 rounded-sm p-1 px-2 bg-gray-200 items-center justify-between">
       <div className="flex flex-col text-lg">
@@ -42,6 +43,23 @@ export const FolderItem = ({ item, setTarget }: Props) => {
           onClick={() => setTarget(item.id)}
         >
           <FaEye className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          aria-label="Editar carpeta"
+          title="Editar carpeta"
+          className="
+            flex h-8 w-8 items-center justify-center rounded-md
+            border border-gray-400
+            bg-gray-50 text-gray-700
+            cursor-pointer
+            transition-colors duration-200
+            hover:bg-gray-100 hover:text-gray-900 focus:outline-none
+            disabled:cursor-not-allowed disabled:opacity-50
+          "
+          onClick={() => updateTarget(item.id)}
+        >
+          <FaPen className="h-4 w-4" />
         </button>
         <button
           type="button"

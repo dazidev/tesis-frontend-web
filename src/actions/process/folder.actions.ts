@@ -5,6 +5,7 @@ import {
   FolderResponse,
   GetFolderRequest,
   NextServerResponse,
+  UpdateFolderRequest,
 } from "@/interfaces";
 
 export async function createFolder(
@@ -42,6 +43,26 @@ export async function getFolder(
     return {
       success: false,
       error: "Hubo un problema al obtener las carpetas.",
+    };
+  }
+}
+
+export async function updateFolder(
+  folderId: string,
+  data: UpdateFolderRequest,
+): Promise<NextServerResponse<FolderResponse>> {
+  try {
+    const response = await serverApi.patch(`/folder/${folderId}`, data);
+
+    return {
+      success: true,
+      data: response.data,
+      message: "La carpeta ha sido actualizada correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al actualizar la carpeta.",
     };
   }
 }

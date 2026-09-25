@@ -85,3 +85,8 @@ export interface UpdateDigitalFileRequest {
   name: string;
   description: string;
 }
+
+export interface UpdateFolderRequest {
+  name: string;
+  description: string;
+}

@@ -1,6 +1,7 @@
 "use client";
 import { getStage, getSubStage } from "@/actions";
 import {
+  BasicDigitalFolderResponse,
   FolderResponse,
   ProcessStage,
   ProcessStageResponse,
@@ -12,7 +13,7 @@ import { OptionModal } from "../ProcessMapView";
 import { CustomModal } from "@/components/common/modal/CustomModal";
 import { ViewGeneral } from "./view/ViewGeneral";
 import { ViewFolder } from "./view/ViewFolder";
-import { CreateFolderModal } from "./CreateFolderModal";
+import { CreateUpdateFolderModal } from "./CreateUpdateFolderModal";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";
@@ -23,6 +24,7 @@ interface Props {
 export interface OptionModalFolder {
   createFolder: boolean;
   deleteFolder: boolean;
+  updateFolder: boolean;
 }
 
 type OptionView = "general" | "folder";
@@ -42,9 +44,12 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   const [openModal, setOpenModal] = useState<OptionModalFolder>({
     createFolder: false,
     deleteFolder: false,
+    updateFolder: false,
   });
   const [view, setView] = useState<OptionView>("general");
   const [target, setTarget] = useState<string>("");
+  const [targetFolder, setTargetFolder] =
+    useState<BasicDigitalFolderResponse>();
 
   useEffect(() => {
     if (!open || !item) return;
@@ -105,6 +110,40 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     });
   };
 
+  const handleUpdateFolderTarget = (folderId: string) => {
+    const folder = data?.digitalFolders.find(
+      (folder) => folder.id === folderId,
+    );
+
+    if (!folder) return;
+
+    setTargetFolder(folder);
+
+    handleModalFolder("updateFolder", true);
+  };
+
+  const updateFolderState = (updatedFolder: FolderResponse) => {
+    setData((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+
+        digitalFolders: prev.digitalFolders.map((folder) =>
+          folder.id === updatedFolder.id
+            ? {
+                ...folder,
+
+                name: updatedFolder.name,
+
+                description: updatedFolder.description,
+              }
+            : folder,
+        ),
+      };
+    });
+  };
+
   if (!open) return null;
   return (
     <>
@@ -129,17 +168,33 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
             isLoading={isLoading}
             handleModalFolder={handleModalFolder}
             setTarget={handleSetTarget}
+            updateTarget={handleUpdateFolderTarget}
           />
         ) : (
           <ViewFolder id={target} setView={setView} />
         )}
       </CustomModal>
-      <CreateFolderModal
-        item={item}
-        open={openModal.createFolder}
-        handleModal={handleModalFolder}
-        addFolder={addFolder}
-      />
+      {openModal.createFolder && (
+        <CreateUpdateFolderModal
+          type="create"
+          item={item}
+          open={openModal.createFolder}
+          handleModal={handleModalFolder}
+          addFolder={addFolder}
+          updateFolderState={updateFolderState}
+        />
+      )}
+      {openModal.updateFolder && targetFolder && (
+        <CreateUpdateFolderModal
+          type="update"
+          item={item}
+          targetFolder={targetFolder}
+          open={openModal.updateFolder}
+          handleModal={handleModalFolder}
+          addFolder={addFolder}
+          updateFolderState={updateFolderState}
+        />
+      )}
     </>
   );
 };

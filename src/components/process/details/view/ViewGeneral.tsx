@@ -10,6 +10,7 @@ interface Props {
   isLoading: boolean;
   handleModalFolder: (option: keyof OptionModalFolder, value: boolean) => void;
   setTarget: (id: string) => void;
+  updateTarget: (id: string) => void;
 }
 
 export const ViewGeneral = ({
@@ -17,6 +18,7 @@ export const ViewGeneral = ({
   isLoading,
   handleModalFolder,
   setTarget,
+  updateTarget,
 }: Props) => {
   return (
     <div className="flex flex-col text-gray-900">
@@ -60,6 +62,7 @@ export const ViewGeneral = ({
               <FolderContainer
                 data={data.digitalFolders}
                 setTarget={setTarget}
+                updateTarget={updateTarget}
               />
             )}
           </div>
