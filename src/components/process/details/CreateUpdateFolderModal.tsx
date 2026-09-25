@@ -166,7 +166,7 @@ export function CreateUpdateFolderModal({
 
             <button
               type="submit"
-              form="create-substage-form"
+              form="create-update-folder-form"
               className="cursor-pointer rounded-md bg-black px-4 py-2 text-sm text-white"
             >
               {type === "create" ? "Crear" : "Actualizar"}

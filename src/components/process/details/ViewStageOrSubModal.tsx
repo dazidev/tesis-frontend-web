@@ -14,6 +14,7 @@ import { CustomModal } from "@/components/common/modal/CustomModal";
 import { ViewGeneral } from "./view/ViewGeneral";
 import { ViewFolder } from "./view/ViewFolder";
 import { CreateUpdateFolderModal } from "./CreateUpdateFolderModal";
+import { DeleteFolderModal } from "./DeleteFolderModal";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";
@@ -43,8 +44,8 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [openModal, setOpenModal] = useState<OptionModalFolder>({
     createFolder: false,
-    deleteFolder: false,
     updateFolder: false,
+    deleteFolder: false,
   });
   const [view, setView] = useState<OptionView>("general");
   const [target, setTarget] = useState<string>("");
@@ -144,6 +145,32 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     });
   };
 
+  const handleDeleteFolderTarget = (folderId: string) => {
+    const folder = data?.digitalFolders.find(
+      (folder) => folder.id === folderId,
+    );
+
+    if (!folder) return;
+
+    setTargetFolder(folder);
+
+    handleModalFolder("deleteFolder", true);
+  };
+
+  const removeFolder = (folderId: string) => {
+    setData((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+
+        digitalFolders: prev.digitalFolders.filter(
+          (folder) => folder.id !== folderId,
+        ),
+      };
+    });
+  };
+
   if (!open) return null;
   return (
     <>
@@ -169,6 +196,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
             handleModalFolder={handleModalFolder}
             setTarget={handleSetTarget}
             updateTarget={handleUpdateFolderTarget}
+            deleteTarget={handleDeleteFolderTarget}
           />
         ) : (
           <ViewFolder id={target} setView={setView} />
@@ -193,6 +221,14 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
           handleModal={handleModalFolder}
           addFolder={addFolder}
           updateFolderState={updateFolderState}
+        />
+      )}
+      {openModal.deleteFolder && targetFolder && (
+        <DeleteFolderModal
+          folder={targetFolder}
+          open={openModal.deleteFolder}
+          handleModal={handleModalFolder}
+          removeFolder={removeFolder}
         />
       )}
     </>

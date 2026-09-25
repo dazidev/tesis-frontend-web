@@ -41,6 +41,8 @@ export interface StageDeactivationRequest extends DeactivationRequest {}
 
 export interface SubStageDeactivationRequest extends DeactivationRequest {}
 
+export interface FolderDeactivationRequest extends DeactivationRequest {}
+
 export interface CreateProcessRequest {
   courtNumber: string;
   caseFileNumber: string;

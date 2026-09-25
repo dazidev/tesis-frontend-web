@@ -34,7 +34,7 @@ export function DeleteFileModal({
 
       removeFile(file.id);
 
-      close();
+      handleModal("delete", false);
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);

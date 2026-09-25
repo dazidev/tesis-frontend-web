@@ -2,6 +2,7 @@
 import { serverApi } from "@/infrastructure/lib/api/server-api";
 import {
   CreateFolderRequest,
+  FolderDeactivationRequest,
   FolderResponse,
   GetFolderRequest,
   NextServerResponse,
@@ -63,6 +64,29 @@ export async function updateFolder(
     return {
       success: false,
       error: "Hubo un problema al actualizar la carpeta.",
+    };
+  }
+}
+
+export async function deleteFolder(
+  folderId: string,
+  data: FolderDeactivationRequest,
+): Promise<NextServerResponse<any>> {
+  try {
+    const response = await serverApi.patch(
+      `/folder/${folderId}/deactivate`,
+      data,
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      message: "La carpeta ha sido eliminada correctamente.",
+    };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      error: "Hubo un problema al eliminar la carpeta.",
     };
   }
 }
