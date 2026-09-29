@@ -1,5 +1,11 @@
 "use client";
-import { getStage, getSubStage, updateTaskCompletion } from "@/actions";
+import {
+  closeStage,
+  closeSubStage,
+  getStage,
+  getSubStage,
+  updateTaskCompletion,
+} from "@/actions";
 import {
   BasicDigitalFolderResponse,
   FolderResponse,
@@ -19,6 +25,7 @@ import { DeleteFolderModal } from "./DeleteFolderModal";
 import toast from "react-hot-toast";
 import { CreateUpdateTaskModal } from "./task/CreateUpdateTaskModal";
 import { DeleteTaskModal } from "./task/DeleteTaskModal";
+import { LoadingScreen } from "@/components/common";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";
@@ -66,6 +73,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     deleteTask: false,
   });
   const [targetTask, setTargetTask] = useState<TaskResponse>();
+  const editable = data?.status === "opened";
 
   useEffect(() => {
     if (!open || !item) return;
@@ -134,6 +142,8 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   };
 
   const handleUpdateFolderTarget = (folderId: string) => {
+    if (!editable) return;
+
     const folder = data?.digitalFolders.find(
       (folder) => folder.id === folderId,
     );
@@ -168,6 +178,8 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   };
 
   const handleDeleteFolderTarget = (folderId: string) => {
+    if (!editable) return;
+
     const folder = data?.digitalFolders.find(
       (folder) => folder.id === folderId,
     );
@@ -194,6 +206,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   };
 
   const addTask = (task: TaskResponse) => {
+    if (!editable) return;
     setData((prev) => {
       if (!prev) return prev;
 
@@ -243,6 +256,8 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   };
 
   const handleUpdateTaskTarget = (taskId: string) => {
+    if (!editable) return;
+
     const task = data?.tasks.find((task) => task.id === taskId);
 
     if (!task) return;
@@ -270,6 +285,8 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   };
 
   const handleDeleteTaskTarget = (taskId: string) => {
+    if (!editable) return;
+
     const task = data?.tasks.find((task) => task.id === taskId);
 
     if (!task) return;
@@ -291,6 +308,52 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     });
   };
 
+  const handleCloseStatus = async () => {
+    if (!data) return;
+
+    try {
+      const response =
+        type === "stage"
+          ? await closeStage(data.id)
+          : await closeSubStage(data.id);
+
+      if (!response.success) {
+        throw new Error(response.error);
+      }
+
+      setData((prev) => {
+        if (!prev) return prev;
+
+        if (isProcessStage(prev)) {
+          return {
+            ...prev,
+            status: "closed",
+            openSubstages: 0,
+          };
+        }
+
+        return {
+          ...prev,
+          status: "closed",
+        };
+      });
+
+      toast.success(response.message!);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+
+        return;
+      }
+
+      toast.error(
+        `Hubo un problema al cerrar la ${
+          type === "stage" ? "etapa" : "subetapa"
+        }.`,
+      );
+    }
+  };
+
   if (!open) return null;
   return (
     <>
@@ -310,20 +373,28 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
         width="max-w-2xl"
       >
         {view === "general" ? (
-          <ViewGeneral
-            data={data!}
-            isLoading={isLoading}
-            handleModalFolder={handleModalFolder}
-            setTarget={handleSetTarget}
-            updateTarget={handleUpdateFolderTarget}
-            deleteTarget={handleDeleteFolderTarget}
-            handleCreateTask={() => handleModalTask("createTask", true)}
-            updateTaskCompletion={handleTaskCompletion}
-            updateTaskTarget={handleUpdateTaskTarget}
-            deleteTaskTarget={handleDeleteTaskTarget}
-          />
+          <>
+            {isLoading && <LoadingScreen />}
+            {data && !isLoading && (
+              <ViewGeneral
+                data={data}
+                editable={editable}
+                type={type}
+                isLoading={isLoading}
+                handleModalFolder={handleModalFolder}
+                setTarget={handleSetTarget}
+                updateTarget={handleUpdateFolderTarget}
+                deleteTarget={handleDeleteFolderTarget}
+                handleCreateTask={() => handleModalTask("createTask", true)}
+                updateTaskCompletion={handleTaskCompletion}
+                updateTaskTarget={handleUpdateTaskTarget}
+                deleteTaskTarget={handleDeleteTaskTarget}
+                handleCloseStatus={handleCloseStatus}
+              />
+            )}
+          </>
         ) : (
-          <ViewFolder id={target} setView={setView} />
+          <ViewFolder id={target} setView={setView} editable={editable} />
         )}
       </CustomModal>
       {openModal.createFolder && (

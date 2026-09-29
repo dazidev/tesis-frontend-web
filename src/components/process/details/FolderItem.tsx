@@ -3,6 +3,7 @@ import { FaEye, FaPen, FaTrash } from "react-icons/fa6";
 
 interface Props {
   item: BasicDigitalFolderResponse;
+  editable: boolean;
   setTarget: (id: string) => void;
   updateTarget: (id: string) => void;
   deleteTarget: (id: string) => void;
@@ -17,6 +18,7 @@ const getDocument = (number: number): string => {
 
 export const FolderItem = ({
   item,
+  editable,
   setTarget,
   updateTarget,
   deleteTarget,
@@ -50,28 +52,30 @@ export const FolderItem = ({
         >
           <FaEye className="h-4 w-4" />
         </button>
-        <button
-          type="button"
-          aria-label="Editar carpeta"
-          title="Editar carpeta"
-          className="
-            flex h-8 w-8 items-center justify-center rounded-md
-            border border-gray-400
-            bg-gray-50 text-gray-700
-            cursor-pointer
-            transition-colors duration-200
-            hover:bg-gray-100 hover:text-gray-900 focus:outline-none
-            disabled:cursor-not-allowed disabled:opacity-50
-          "
-          onClick={() => updateTarget(item.id)}
-        >
-          <FaPen className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          aria-label={`Eliminar etapa`}
-          title="Eliminar etapa"
-          className="
+        {editable && (
+          <>
+            <button
+              type="button"
+              aria-label="Editar carpeta"
+              title="Editar carpeta"
+              className="
+                flex h-8 w-8 items-center justify-center rounded-md
+                border border-gray-400
+                bg-gray-50 text-gray-700
+                cursor-pointer
+                transition-colors duration-200
+                hover:bg-gray-100 hover:text-gray-900 focus:outline-none
+                disabled:cursor-not-allowed disabled:opacity-50
+              "
+              onClick={() => updateTarget(item.id)}
+            >
+              <FaPen className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label={`Eliminar etapa`}
+              title="Eliminar etapa"
+              className="
                 flex h-8 w-8 items-center justify-center rounded-md
                 border border-red-300
                 bg-red-100 text-red-600
@@ -80,10 +84,12 @@ export const FolderItem = ({
                 hover:bg-red-200 hover:text-red-700 focus:outline-none
                 disabled:cursor-not-allowed disabled:opacity-50
               "
-          onClick={() => deleteTarget(item.id)}
-        >
-          <FaTrash className="h-4 w-4" />
-        </button>
+              onClick={() => deleteTarget(item.id)}
+            >
+              <FaTrash className="h-4 w-4" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

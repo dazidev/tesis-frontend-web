@@ -10,10 +10,11 @@ import { DeleteFileModal } from "../file/DeleteFileModal";
 
 interface Props {
   id: string;
+  editable: boolean;
   setView: Dispatch<SetStateAction<"general" | "folder">>;
 }
 
-export const ViewFolder = ({ id, setView }: Props) => {
+export const ViewFolder = ({ id, editable, setView }: Props) => {
   const [data, setData] = useState<FolderResponse>();
 
   const [files, setFiles] = useState<DigitalFileResponse[]>([]);
@@ -39,10 +40,6 @@ export const ViewFolder = ({ id, setView }: Props) => {
         setIsLoading(false);
         return;
       }
-
-      //! todo: remove
-      console.log("getFolder response:", response);
-      console.log("folder data:", response.data);
 
       setData(response.data);
 
@@ -120,8 +117,8 @@ export const ViewFolder = ({ id, setView }: Props) => {
           <div className="flex flex-row items-center gap-5">
             <button
               type="button"
-              aria-label={`Agregar etapa intermedia`}
-              title="Agregar etapa intermedia"
+              aria-label={`Ir atras`}
+              title="Ir atras"
               className="
                 flex h-9 w-9 items-center justify-center
                 text-gray-700 cursor-pointer
@@ -144,12 +141,12 @@ export const ViewFolder = ({ id, setView }: Props) => {
 
           <div className="flex flex-row items-center justify-between px-2">
             <span>Documentos ({files ? files.length : "0"})</span>
-
-            <button
-              type="button"
-              aria-label={`Agregar etapa intermedia`}
-              title="Agregar etapa intermedia"
-              className="
+            {editable && (
+              <button
+                type="button"
+                aria-label={`Agregar documento`}
+                title="Agregar documento"
+                className="
                 flex h-7 w-7 items-center justify-center rounded-md
                 border border-green-300
                 bg-green-50 text-green-700
@@ -158,10 +155,11 @@ export const ViewFolder = ({ id, setView }: Props) => {
                 hover:bg-green-100 hover:text-green-900 focus:outline-none
                 disabled:cursor-not-allowed disabled:opacity-50
               "
-              onClick={() => handleModal("add", true)}
-            >
-              <FaPlus className="h-4 w-4" />
-            </button>
+                onClick={() => handleModal("add", true)}
+              >
+                <FaPlus className="h-4 w-4" />
+              </button>
+            )}
           </div>
 
           <div>
@@ -171,6 +169,7 @@ export const ViewFolder = ({ id, setView }: Props) => {
                 setTarget={handleViewFile}
                 updateTarget={handleUpdateTarget}
                 deleteTarget={handleDeleteTarget}
+                editable={editable}
               />
             )}
           </div>

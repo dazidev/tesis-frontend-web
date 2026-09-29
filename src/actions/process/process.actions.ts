@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  CloseStageResponse,
   ProcessByIdResponse,
   ProcessResponse,
   ProcessStageResponse,
@@ -16,6 +17,7 @@ import {
   SubStageDeactivationRequest,
 } from "../../interfaces/next/next.interface";
 import { serverApi } from "@/infrastructure/lib/api/server-api";
+import axios from "axios";
 
 export async function getProcesses(): Promise<
   NextServerResponse<ProcessResponse[]>
@@ -226,6 +228,62 @@ export async function deactivateSubstage(
     return {
       success: false,
       error: "Hubo un problema al desactivar la subetapa.",
+    };
+  }
+}
+
+export async function closeStage(
+  stageId: string,
+): Promise<NextServerResponse<CloseStageResponse>> {
+  try {
+    const response = await serverApi.patch(`/processes/stage/${stageId}/close`);
+
+    return {
+      success: true,
+      data: response.data,
+      message: "La etapa ha sido cerrada correctamente.",
+    };
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.message ?? "No fue posible cerrar la etapa.",
+      };
+    }
+
+    return {
+      success: false,
+      error: "No fue posible cerrar la etapa.",
+    };
+  }
+}
+
+export async function closeSubStage(
+  substageId: string,
+): Promise<NextServerResponse<CloseStageResponse>> {
+  try {
+    const response = await serverApi.patch(
+      `/processes/substage/${substageId}/close`,
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      message: "La subetapa ha sido cerrada correctamente.",
+    };
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.message ?? "No fue posible cerrar la subetapa.",
+      };
+    }
+
+    return {
+      success: false,
+      error: "No fue posible cerrar la subetapa.",
     };
   }
 }

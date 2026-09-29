@@ -3,6 +3,7 @@ import { FileItem } from "./FileItem";
 
 interface Props {
   data: DigitalFileResponse[] | [];
+  editable: boolean;
   setTarget: (id: string) => void;
   updateTarget: (id: string) => void;
   deleteTarget: (id: string) => void;
@@ -10,6 +11,7 @@ interface Props {
 
 export const FileContainer = ({
   data,
+  editable,
   setTarget,
   updateTarget,
   deleteTarget,
@@ -17,10 +19,11 @@ export const FileContainer = ({
   return (
     <div className="flex flex-col bg-gray-100 border-1 border-lg rounded-lg p-2 gap-2">
       {data &&
-        data.map((folder) => (
+        data.map((file) => (
           <FileItem
-            key={folder.id}
-            item={folder}
+            key={file.id}
+            item={file}
+            editable={editable}
             setTarget={setTarget}
             updateTarget={updateTarget}
             deleteTarget={deleteTarget}

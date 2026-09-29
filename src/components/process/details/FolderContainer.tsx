@@ -3,6 +3,7 @@ import { FolderItem } from "./FolderItem";
 
 interface Props {
   data: BasicDigitalFolderResponse[];
+  editable: boolean;
   setTarget: (id: string) => void;
   updateTarget: (id: string) => void;
   deleteTarget: (id: string) => void;
@@ -10,6 +11,7 @@ interface Props {
 
 export const FolderContainer = ({
   data,
+  editable,
   setTarget,
   updateTarget,
   deleteTarget,
@@ -20,6 +22,7 @@ export const FolderContainer = ({
         <FolderItem
           key={folder.id}
           item={folder}
+          editable={editable}
           setTarget={setTarget}
           updateTarget={updateTarget}
           deleteTarget={deleteTarget}

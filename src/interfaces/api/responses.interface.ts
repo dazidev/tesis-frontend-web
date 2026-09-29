@@ -203,3 +203,9 @@ export interface TaskResponse {
   stageId: string;
   substageId: string | null;
 }
+
+export interface CloseStageResponse {
+  id: string;
+  status: "closed";
+  openSubstages?: number;
+}

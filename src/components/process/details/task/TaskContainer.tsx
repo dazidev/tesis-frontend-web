@@ -3,6 +3,7 @@ import { TaskItem } from "./TaskItem";
 
 interface Props {
   data: TaskResponse[];
+  editable: boolean;
   updateCompletion: (id: string, completed: boolean) => void;
   updateTarget: (id: string) => void;
   deleteTarget: (id: string) => void;
@@ -10,6 +11,7 @@ interface Props {
 
 export const TaskContainer = ({
   data,
+  editable,
   updateCompletion,
   updateTarget,
   deleteTarget,
@@ -20,6 +22,7 @@ export const TaskContainer = ({
         <TaskItem
           key={task.id}
           item={task}
+          editable={editable}
           updateCompletion={updateCompletion}
           updateTarget={updateTarget}
           deleteTarget={deleteTarget}
