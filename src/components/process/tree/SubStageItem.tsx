@@ -25,6 +25,7 @@ export function SubstageItem({
   const [expanded, setExpanded] = useState(true);
   const [showOptions, setShowOptions] = useState(false);
   const hasChildren = substage.childrenSubstages.length > 0;
+  const editable = substage.status === "opened";
 
   const handleShowOptions = () => {
     setShowOptions((prev) => !prev);
@@ -90,46 +91,47 @@ export function SubstageItem({
                     transition-colors duration-200
                     hover:bg-orange-100 hover:text-orange-600 focus:outline-none
                   "
-                  onClick={() => {}}
+                  onClick={() => handleView(substage, "substage")}
                 >
-                  <FaEye
-                    className="h-3 w-3"
-                    onClick={() => handleView(substage, "substage")}
-                  />
+                  <FaEye className="h-3 w-3" />
                 </button>
-                <button
-                  type="button"
-                  aria-label={`Agregar subetapa hija de ${substage.name}`}
-                  title="Agregar subetapa"
-                  className="
-                    flex h-6 w-6 items-center justify-center rounded-md
-                    border border-green-300
-                    bg-green-50 text-green-700
-                    cursor-pointer
-                    transition-colors duration-200
-                    hover:bg-green-100 hover:text-green-900 focus:outline-none
-                  "
-                  onClick={() => handleCreateSubStage(substage, "SubStage")}
-                >
-                  <FaPlus className="h-3 w-3" />
-                </button>
-                <button
-                  type="button"
-                  aria-label={`Eliminar etapa`}
-                  title="Eliminar etapa"
-                  className="
-                    flex h-6 w-6 items-center justify-center rounded-md
-                    border border-red-300
-                    bg-red-100 text-red-600
-                    cursor-pointer
-                    transition-colors duration-200
-                    hover:bg-red-200 hover:text-red-700 focus:outline-none
-                    disabled:cursor-not-allowed disabled:opacity-50
-                  "
-                  onClick={() => handleDeactivateSubStage(substage)}
-                >
-                  <FaTrash className="h-3 w-3" />
-                </button>
+                {editable && (
+                  <>
+                    <button
+                      type="button"
+                      aria-label={`Agregar subetapa hija de ${substage.name}`}
+                      title="Agregar subetapa"
+                      className="
+                        flex h-6 w-6 items-center justify-center rounded-md
+                        border border-green-300
+                        bg-green-50 text-green-700
+                        cursor-pointer
+                        transition-colors duration-200
+                        hover:bg-green-100 hover:text-green-900 focus:outline-none
+                      "
+                      onClick={() => handleCreateSubStage(substage, "SubStage")}
+                    >
+                      <FaPlus className="h-3 w-3" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Eliminar subetapa ${substage.name}`}
+                      title="Eliminar subetapa"
+                      className="
+                        flex h-6 w-6 items-center justify-center rounded-md
+                        border border-red-300
+                        bg-red-100 text-red-600
+                        cursor-pointer
+                        transition-colors duration-200
+                        hover:bg-red-200 hover:text-red-700
+                        focus:outline-none
+                      "
+                      onClick={() => handleDeactivateSubStage(substage)}
+                    >
+                      <FaTrash className="h-3 w-3" />
+                    </button>
+                  </>
+                )}
               </>
             )}
           </div>
