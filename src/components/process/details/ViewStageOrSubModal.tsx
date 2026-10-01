@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import { CreateUpdateTaskModal } from "./task/CreateUpdateTaskModal";
 import { DeleteTaskModal } from "./task/DeleteTaskModal";
 import { LoadingScreen } from "@/components/common";
+import { useRouter } from "next/navigation";
 interface Props {
   item: ProcessStage | SubstageNode;
   type: "stage" | "substage";
@@ -74,6 +75,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
   });
   const [targetTask, setTargetTask] = useState<TaskResponse>();
   const editable = data?.status === "opened";
+  const router = useRouter();
 
   useEffect(() => {
     if (!open || !item) return;
@@ -131,7 +133,7 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     return () => {
       cancelled = true;
     };
-  }, [item.id, type, open]);
+  }, [item, type, open]);
 
   const handleModalFolder = (
     option: keyof OptionModalFolder,
@@ -371,10 +373,10 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
       });
 
       toast.success(response.message!);
+      router.refresh();
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(error.message);
-
         return;
       }
 

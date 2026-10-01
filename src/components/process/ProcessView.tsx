@@ -1,25 +1,16 @@
-"use client";
+"use server";
 import { processStatusNames, statusStyles } from "@/infrastructure";
 import { ProcessByIdResponse } from "@/interfaces";
-import { useEffect, useState } from "react";
 import ProcessMapView from "./ProcessMapView";
 
 interface Props {
   data: ProcessByIdResponse | undefined;
 }
 
-export function ProcessView({ data }: Props) {
-  const [process, setProcess] = useState<ProcessByIdResponse>();
-
-  useEffect(() => {
-    if (data) {
-      setProcess(data);
-    }
-  }, []);
-
+export async function ProcessView({ data }: Props) {
   return (
     <>
-      {process && (
+      {data && (
         <div className="flex flex-col gap-3 w-full h-full px-3 py-5">
           <div className="w-full overflow-x-hidden relative rounded-lg border border-gray-300">
             <table className="w-full text-sm text-left text-gray-700">
@@ -49,29 +40,29 @@ export function ProcessView({ data }: Props) {
               <tbody>
                 <tr>
                   <td className="py-6 px-6 text-left bg-white text-gray-700">
-                    {process.caseFileNumber}
+                    {data.caseFileNumber}
                   </td>
                   <td className="py-6 px-6 text-left bg-white text-gray-700">
-                    {process.courtNumber}
+                    {data.courtNumber}
                   </td>
                   <td className="py-6 px-6 text-left bg-white text-gray-700">
-                    {process.type}
+                    {data.type}
                   </td>
                   <td className="py-6 px-6 text-left bg-white text-gray-700">
                     <span
-                      className={`px-2 py-1 rounded-lg ${statusStyles[process.status]}`}
+                      className={`px-2 py-1 rounded-lg ${statusStyles[data.status]}`}
                     >
-                      {processStatusNames[process.status]}
+                      {processStatusNames[data.status]}
                     </span>
                   </td>
                   <td className="py-6 px-6 text-left bg-white text-gray-700">
-                    {`${process.defendant.name} ${process.defendant.lastname}`}
+                    {`${data.defendant.name} ${data.defendant.lastname}`}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <ProcessMapView stages={process.stages} />
+          <ProcessMapView stages={data.stages} />
         </div>
       )}
     </>
