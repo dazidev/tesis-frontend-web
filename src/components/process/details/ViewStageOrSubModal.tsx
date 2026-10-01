@@ -77,29 +77,61 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
 
   useEffect(() => {
     if (!open || !item) return;
+
+    let cancelled = false;
+
     const getData = async () => {
       setIsLoading(true);
-      if (type === "stage") {
-        const response = await getStage(item.id);
-        if (!response.success) {
-          setError(`${response.message}`);
+      setError("");
+      setData(undefined);
+      setView("general");
+
+      try {
+        const response =
+          type === "stage"
+            ? await getStage(item.id)
+            : await getSubStage(item.id);
+
+        if (cancelled) return;
+
+        if (!response.success || !response.data) {
+          setError(
+            response.error ??
+              `No fue posible cargar la ${
+                type === "stage" ? "etapa" : "subetapa"
+              }.`,
+          );
+
           return;
         }
+
         setData(response.data);
-      } else if (type === "substage") {
-        const response = await getSubStage(item.id);
-        if (!response.success) {
-          setError(`${response.message}`);
+      } catch (error: unknown) {
+        if (cancelled) return;
+
+        if (error instanceof Error) {
+          setError(error.message);
           return;
         }
-        setData(response.data);
+
+        setError(
+          `Hubo un problema al cargar la ${
+            type === "stage" ? "etapa" : "subetapa"
+          }.`,
+        );
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
-      setIsLoading(false);
     };
 
-    setView("general");
-    getData();
-  }, [item, type, open]);
+    void getData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [item.id, type, open]);
 
   const handleModalFolder = (
     option: keyof OptionModalFolder,
@@ -359,7 +391,13 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
     <>
       <CustomModal
         open={true}
-        title={isLoading ? "Cargando..." : `${data?.name}`}
+        title={
+          isLoading
+            ? "Cargando..."
+            : error
+              ? "Error al cargar"
+              : (data?.name ?? (type === "stage" ? "Etapa" : "Subetapa"))
+        }
         onClose={() => onClose("view", false)}
         footer={
           <button
@@ -375,12 +413,16 @@ export const ViewStageOrSubModal = ({ item, type, open, onClose }: Props) => {
         {view === "general" ? (
           <>
             {isLoading && <LoadingScreen />}
-            {data && !isLoading && (
+            {!isLoading && error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+            {data && !isLoading && !error && (
               <ViewGeneral
                 data={data}
                 editable={editable}
                 type={type}
-                isLoading={isLoading}
                 handleModalFolder={handleModalFolder}
                 setTarget={handleSetTarget}
                 updateTarget={handleUpdateFolderTarget}
