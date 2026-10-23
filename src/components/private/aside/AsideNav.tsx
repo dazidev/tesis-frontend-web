@@ -1,30 +1,37 @@
 "use server";
+
 import { auth } from "@/infrastructure/lib/auth";
 import { AsideNavItem } from "./AsideNavItem";
 import { AsideUserOptions } from "./AsideUserOptions";
 
 export const AsideNav = async () => {
   const session = await auth();
+
   const fullname = `${session?.user.name} ${session?.user.lastname}`;
   const email = `${session?.user.email}`;
+
+  const isAdmin = session?.user.roles.includes("admin");
 
   return (
     <aside className="flex flex-col justify-between w-[300px] shrink-0 h-screen bg-pwhite border-r border-r-pborder">
       <div className="p-5">
         <ul className="flex flex-col w-full py-5 gap-0.5 text-black">
-          <AsideNavItem label={"Inicio"} icon={"home"} path={"/panel"} />
+          <AsideNavItem label="Inicio" icon="home" path="/panel" />
+
+          <AsideNavItem label="Usuarios" icon="users" path="/panel/users" />
+
           <AsideNavItem
-            label={"Usuarios"}
-            icon={"users"}
-            path={"/panel/users"}
+            label="Procesos"
+            icon="balance"
+            path="/panel/processes"
           />
-          <AsideNavItem
-            label={"Procesos"}
-            icon={"balance"}
-            path={"/panel/processes"}
-          />
+
+          {isAdmin && (
+            <AsideNavItem label="Registros" icon="logs" path="/panel/logs" />
+          )}
         </ul>
       </div>
+
       <AsideUserOptions fullname={fullname} email={email} />
     </aside>
   );
