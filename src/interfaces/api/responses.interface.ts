@@ -209,3 +209,36 @@ export interface CloseStageResponse {
   status: "closed";
   openSubstages?: number;
 }
+
+export interface LogResponse {
+  id: string;
+  userId: string | null;
+  user: {
+    id: string;
+    name: string;
+    lastname: string;
+    email: string;
+  } | null;
+  affected: string | null;
+  entity: string | null;
+  action: string;
+  description: string;
+  createdAt: string;
+}
+
+export interface PaginatedLogsResponse {
+  data: LogResponse[];
+  totalCount: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface LogFilterCategory {
+  entity: string;
+  actions: string[];
+}
+
+export interface LogFiltersResponse {
+  categories: LogFilterCategory[];
+}

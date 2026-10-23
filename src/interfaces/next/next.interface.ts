@@ -109,3 +109,14 @@ export interface UpdateTaskRequest {
   description: string;
   dueDate: string;
 }
+
+export interface FindLogsRequest {
+  entity?: string;
+  action?: string;
+  userId?: string;
+  from?: string;
+  to?: string;
+  page?: number;
+  limit?: number;
+  userSearch?: string;
+}
