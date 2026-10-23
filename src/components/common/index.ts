@@ -1,6 +1,9 @@
 export * from "./table/CustomTable";
 export * from "./table/users/UsersTable";
 export * from "./table/processes/ProcessesTable";
+export * from "./table/logs/LogsTable";
+export * from "./table/logs/LogsFilters";
+export * from "./table/logs/LogsPagination";
 export { CustomInput } from "./input/CustomInput";
 export { CustomButton } from "./button/CustomButton";
 export { InviteUserModal } from "./modal/invite-user/InviteUserModal";
@@ -11,4 +14,5 @@ export { CreateProcessModal } from "./modal/processes/CreateProcessModal";
 export { InitProcessModal } from "./modal/processes/InitProcessModal";
 export { CreateSubStageModal } from "./modal/processes/CreateSubStageModal";
 export { SearchUserModal } from "./modal/search-user/SearchUserModal";
+export * from "./modal/logs/LogDetailsModal";
 export { LoadingScreen } from "./loading/LoadingScreen";

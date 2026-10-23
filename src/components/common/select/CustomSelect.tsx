@@ -10,9 +10,10 @@ interface Props {
   label: string;
   placeholder?: string;
   value: string;
-  setValue: Dispatch<SetStateAction<string>> | ((value: string) => void);
+  setValue: (value: string) => void;
   options: SelectOption[];
   required?: boolean;
+  allowEmptyOption?: boolean;
 }
 
 export const CustomSelect = ({
@@ -23,6 +24,7 @@ export const CustomSelect = ({
   setValue,
   options,
   required = false,
+  allowEmptyOption = false,
 }: Props) => {
   return (
     <div className="flex flex-col">
@@ -37,7 +39,7 @@ export const CustomSelect = ({
         onChange={(e) => setValue(e.target.value)}
         className="w-full h-11 px-4 text-gray-900 border border-gray-300 rounded-lg outline-none focus:border-blue-500 bg-white"
       >
-        <option value="" disabled>
+        <option value="" disabled={!allowEmptyOption}>
           {placeholder}
         </option>
 
