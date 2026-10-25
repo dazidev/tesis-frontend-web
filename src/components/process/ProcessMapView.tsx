@@ -42,7 +42,7 @@ export default function ProcessMapView({
     deactivateSubStage: false,
   });
   const [viewType, setViewType] = useState<ViewType>("stage");
-  const [showOptions, setShowOptions] = useState(() => stages.map(() => false));
+  const [showOptionsId, setShowOptionsId] = useState<string | null>(null);
 
   const handleModal = (option: keyof OptionModal, value: boolean) => {
     setOpen((prev) => ({ ...prev, [option]: value }));
@@ -67,8 +67,8 @@ export default function ProcessMapView({
     handleModal("deactivateSubStage", true);
   };
 
-  const handleShowOptions = (index: number) => {
-    setShowOptions((prev) => ({ ...prev, [index]: !prev[index] }));
+  const handleShowOptions = (stageId: string) => {
+    setShowOptionsId((prev) => (prev === stageId ? null : stageId));
   };
 
   return (
@@ -99,15 +99,15 @@ export default function ProcessMapView({
                         hover:bg-gray-50 hover:text-gray-600 focus:outline-none
                           disabled:cursor-not-allowed disabled:opacity-50
                         "
-                        onClick={() => handleShowOptions(i)}
+                        onClick={() => handleShowOptions(stage.id)}
                       >
-                        {showOptions[i] ? (
+                        {showOptionsId === stage.id ? (
                           <FaChevronRight className="h-4 w-4" />
                         ) : (
                           <PiDotsThreeOutlineFill className="h-4 w-4" />
                         )}
                       </button>
-                      {showOptions[i] && (
+                      {showOptionsId === stage.id && (
                         <>
                           <button
                             type="button"
