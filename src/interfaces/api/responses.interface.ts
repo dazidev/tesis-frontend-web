@@ -70,7 +70,7 @@ export type ProcessStatus = "created" | "opened" | "closed" | "deleted";
 
 export type StageStatus = "created" | "opened" | "closed";
 
-export type SubstageStatus = "created" | "opened" | "closed";
+export type SubstageStatus = "opened" | "closed";
 
 export interface ProcessResponse {
   id: string;
