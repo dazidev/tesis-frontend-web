@@ -6,6 +6,27 @@ import { SubstageTree } from "./SubStageTree";
 import { PiDotsThreeOutlineFill } from "react-icons/pi";
 import { ViewType } from "../ProcessMapView";
 
+const substageStatusConfig: Record<
+  SubstageNode["status"],
+  {
+    label: string;
+    container: string;
+    badge: string;
+  }
+> = {
+  opened: {
+    label: "En curso",
+    container: "bg-blue-50 border-blue-300",
+    badge: "bg-blue-100 text-blue-700 border border-blue-200",
+  },
+
+  closed: {
+    label: "Cerrada",
+    container: "bg-green-50 border-green-300",
+    badge: "bg-green-100 text-green-700 border border-green-200",
+  },
+};
+
 export function SubstageItem({
   substage,
   depth,
@@ -26,6 +47,7 @@ export function SubstageItem({
   const [showOptions, setShowOptions] = useState(false);
   const hasChildren = substage.childrenSubstages.length > 0;
   const editable = substage.status === "opened";
+  const statusConfig = substageStatusConfig[substage.status];
 
   const handleShowOptions = () => {
     setShowOptions((prev) => !prev);
@@ -51,16 +73,41 @@ export function SubstageItem({
           <span className="w-3 shrink-0" />
         )}
 
-        <div className="flex items-center justify-between gap-3 bg-gray-100 border border-gray-400 rounded-md px-3 py-2 w-full">
+        <div
+          className={`
+            flex items-center justify-between
+            gap-3
+            rounded-md
+            border
+            px-3 py-2
+            w-full
+            transition-colors duration-200
+            ${statusConfig.container}
+          `}
+        >
           <span className="text-sm font-medium text-gray-800 whitespace-nowrap">
             {substage.name}
           </span>
-          <div className="flex flex-row gap-1 shrink-0">
-            <button
-              type="button"
-              aria-label={`Ver opciones`}
-              title="Ver opciones"
-              className="
+
+          <div className="flex items-center gap-2 shrink-0">
+            <span
+              className={`
+                rounded-full
+                px-2 py-0.5
+                text-xs
+                font-medium
+                ${statusConfig.badge}
+              `}
+            >
+              {statusConfig.label}
+            </span>
+
+            <div className="flex flex-row gap-1 shrink-0">
+              <button
+                type="button"
+                aria-label={`Ver opciones`}
+                title="Ver opciones"
+                className="
                 flex h-6 w-6 items-center justify-center rounded-md
                 border border-gray-300
                 bg-gray-100 text-gray-500
@@ -69,21 +116,21 @@ export function SubstageItem({
                 hover:bg-gray-50 hover:text-gray-600 focus:outline-none
                 disabled:cursor-not-allowed disabled:opacity-50
               "
-              onClick={handleShowOptions}
-            >
-              {showOptions ? (
-                <FaChevronRight className="h-3 w-3" />
-              ) : (
-                <PiDotsThreeOutlineFill className="h-3 w-3" />
-              )}
-            </button>
-            {showOptions && (
-              <>
-                <button
-                  type="button"
-                  aria-label={`Ver subetapa ${substage.name}`}
-                  title="Ver subetapa"
-                  className="
+                onClick={handleShowOptions}
+              >
+                {showOptions ? (
+                  <FaChevronRight className="h-3 w-3" />
+                ) : (
+                  <PiDotsThreeOutlineFill className="h-3 w-3" />
+                )}
+              </button>
+              {showOptions && (
+                <>
+                  <button
+                    type="button"
+                    aria-label={`Ver subetapa ${substage.name}`}
+                    title="Ver subetapa"
+                    className="
                     flex h-6 w-6 items-center justify-center rounded-md
                     border border-orange-300
                     bg-orange-50 text-orange-500
@@ -91,17 +138,17 @@ export function SubstageItem({
                     transition-colors duration-200
                     hover:bg-orange-100 hover:text-orange-600 focus:outline-none
                   "
-                  onClick={() => handleView(substage, "substage")}
-                >
-                  <FaEye className="h-3 w-3" />
-                </button>
-                {editable && (
-                  <>
-                    <button
-                      type="button"
-                      aria-label={`Agregar subetapa hija de ${substage.name}`}
-                      title="Agregar subetapa"
-                      className="
+                    onClick={() => handleView(substage, "substage")}
+                  >
+                    <FaEye className="h-3 w-3" />
+                  </button>
+                  {editable && (
+                    <>
+                      <button
+                        type="button"
+                        aria-label={`Agregar subetapa hija de ${substage.name}`}
+                        title="Agregar subetapa"
+                        className="
                         flex h-6 w-6 items-center justify-center rounded-md
                         border border-green-300
                         bg-green-50 text-green-700
@@ -109,15 +156,17 @@ export function SubstageItem({
                         transition-colors duration-200
                         hover:bg-green-100 hover:text-green-900 focus:outline-none
                       "
-                      onClick={() => handleCreateSubStage(substage, "SubStage")}
-                    >
-                      <FaPlus className="h-3 w-3" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Eliminar subetapa ${substage.name}`}
-                      title="Eliminar subetapa"
-                      className="
+                        onClick={() =>
+                          handleCreateSubStage(substage, "SubStage")
+                        }
+                      >
+                        <FaPlus className="h-3 w-3" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Eliminar subetapa ${substage.name}`}
+                        title="Eliminar subetapa"
+                        className="
                         flex h-6 w-6 items-center justify-center rounded-md
                         border border-red-300
                         bg-red-100 text-red-600
@@ -126,14 +175,15 @@ export function SubstageItem({
                         hover:bg-red-200 hover:text-red-700
                         focus:outline-none
                       "
-                      onClick={() => handleDeactivateSubStage(substage)}
-                    >
-                      <FaTrash className="h-3 w-3" />
-                    </button>
-                  </>
-                )}
-              </>
-            )}
+                        onClick={() => handleDeactivateSubStage(substage)}
+                      >
+                        <FaTrash className="h-3 w-3" />
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
