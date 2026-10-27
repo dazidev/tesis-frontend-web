@@ -62,7 +62,7 @@ export async function ProcessView({ data }: Props) {
               </tbody>
             </table>
           </div>
-          <ProcessMapView stages={data.stages} />
+          <ProcessMapView stages={data.stages} processStatus={data.status} />
         </div>
       )}
     </>

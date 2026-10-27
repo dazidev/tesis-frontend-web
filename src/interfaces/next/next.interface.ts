@@ -67,7 +67,6 @@ export interface CreateSubStageRequest {
 export interface CreateStageRequest {
   name: string;
   description: string;
-  order: number;
 }
 
 export interface CreateFolderRequest {

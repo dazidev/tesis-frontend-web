@@ -120,21 +120,64 @@ export async function initProcess(
   }
 }
 
-export async function createStage(
-  data: CreateStageRequest,
-  processId: string,
+export async function finalizeProcess(
+  stageId: string,
 ): Promise<NextServerResponse<any>> {
   try {
-    await serverApi.post(`/processes/${processId}/stage`, data);
+    const response = await serverApi.patch(
+      `/processes/stage/${stageId}/finalize-process`,
+    );
 
     return {
       success: true,
+      data: response.data,
+      message: "El proceso ha sido finalizado correctamente.",
+    };
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.message ??
+          "No fue posible finalizar el proceso.",
+      };
+    }
+
+    return {
+      success: false,
+      error: "No fue posible finalizar el proceso.",
+    };
+  }
+}
+
+export async function createStage(
+  data: CreateStageRequest,
+  stageId: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    const response = await serverApi.post(
+      `/processes/stage/${stageId}/intermediate`,
+      data,
+    );
+
+    return {
+      success: true,
+      data: response.data,
       message: "La etapa intermedia ha sido creada correctamente.",
     };
   } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.message ??
+          "No fue posible crear la etapa intermedia.",
+      };
+    }
+
     return {
       success: false,
-      error: "Hubo un problema al crear la etapa intermedia.",
+      error: "No fue posible crear la etapa intermedia.",
     };
   }
 }
@@ -284,6 +327,37 @@ export async function closeSubStage(
     return {
       success: false,
       error: "No fue posible cerrar la subetapa.",
+    };
+  }
+}
+
+export async function advanceStage(
+  stageId: string,
+): Promise<NextServerResponse<any>> {
+  try {
+    const response = await serverApi.patch(
+      `/processes/stage/${stageId}/advance`,
+    );
+
+    return {
+      success: true,
+      data: response.data,
+      message: "Se ha avanzado a la siguiente etapa correctamente.",
+    };
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+
+        error:
+          error.response?.data?.message ??
+          "No fue posible avanzar a la siguiente etapa.",
+      };
+    }
+
+    return {
+      success: false,
+      error: "No fue posible avanzar a la siguiente etapa.",
     };
   }
 }

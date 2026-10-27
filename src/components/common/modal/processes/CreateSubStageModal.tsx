@@ -91,11 +91,15 @@ export function CreateSubStageModal({
         if (isProcessStage(item)) {
           const data: CreateStageRequest = {
             name: form.name,
+
             description: form.description,
-            order: item.order + 1,
           };
-          const response = await createStage(data, item.processId);
-          if (!response.success) throw new Error(response.error);
+
+          const response = await createStage(data, item.id);
+
+          if (!response.success) {
+            throw new Error(response.error);
+          }
 
           toast.success(response.message!);
         }
